@@ -1,0 +1,63 @@
+<div class="box">
+    <div *ngIf="!initialOffer">
+        <div class="box-header">
+            <h1>Check your offer!</h1>
+            <p>
+                You can check how much you can get by entering only PESEL number and e-mail address.
+            </p>
+        </div>
+        <div class="field">
+            <label class="label">PESEL</label>
+            <p class="control has-icons-left">
+                <input
+                    class="input"
+                    type="text"
+                >
+                <span class="icon is-small is-left">
+                    <i class="fas fa-address-card"></i>
+                </span>
+            </p>
+        </div>
+        <div class="field">
+            <label class="label">E-mail</label>
+            <p class="control has-icons-left">
+                <input
+                    class="input"
+                    type="email"
+                >
+                <span class="icon is-small is-left">
+                    <i class="fas fa-envelope"></i>
+                </span>
+            </p>
+        </div>
+        <div class="offer-button-container">
+            <button
+                class="button is-info offer-button"
+                [ngClass]="{'is-loading': isGettingOffer}"
+                (click)="getInitialOffer()"
+            >
+                Get offer!
+            </button>
+        </div>
+    </div>
+    <div *ngIf="initialOffer">
+        <div class="slider-container">
+            <input
+                class="slider"
+                step="100"
+                min="{{initialOffer.minAmount}}"
+                max="{{initialOffer.maxAmount}}"
+                value="{{initialOffer.maxAmount}}"
+                type="range"
+            >
+        </div>
+        <div class="offer-button-container">
+            <button
+                class="button is-info offer-button"
+                [disabled]="!initialOffer"
+            >
+                Take loan!
+            </button>
+        </div>
+    </div>
+</div>
