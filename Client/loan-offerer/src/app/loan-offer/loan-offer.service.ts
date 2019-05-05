@@ -6,7 +6,6 @@ import { Observable, from } from 'rxjs';
   providedIn: 'root'
 })
 export class LoanOfferService {
-
   constructor() { }
 
   getLoanOffer(pesel: string, email: string): Observable<InitialOfferReadModel> {
@@ -19,6 +18,13 @@ export class LoanOfferService {
     return from(promise);
   }
 
+  sendLoanApplication(id: string, loanAmount: number): Observable<string> {
+    const promise = new Promise<string>(
+      resolve => setTimeout(
+        () => resolve(), 3000));
+
+    return from(promise);
+  }
 
   private getMockedLoanOffer(): InitialOfferReadModel {
     const initialOfferResult: InitialOfferReadModel = {

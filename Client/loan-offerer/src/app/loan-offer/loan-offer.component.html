@@ -48,25 +48,50 @@
             </div>
         </form>
     </div>
-    <div *ngIf="initialOffer">
-        <div></div>
-        <div class="slider-container">
-            <input
-                class="slider"
-                step="100"
-                min="{{ initialOffer.minAmount }}"
-                max="{{ initialOffer.maxAmount }}"
-                value="{{ initialOffer.maxAmount }}"
-                type="range"
-            >
+    <div *ngIf="initialOffer && !applicationSent">
+        <div class="box-header">
+            <h1>Congratulations!</h1>
+            <p>
+                You can get up to
+                <b>
+                    {{ initialOffer.maxAmount | currency:'EUR' }}
+                </b>
+                !
+            </p>
+            <p>Select your amount and apply.</p>
         </div>
-        <div class="offer-button-container">
-            <button
-                class="button is-info offer-button"
-                [disabled]="!initialOffer"
-            >
-                Take loan!
-            </button>
+        <form (ngSubmit)="sendLoanApplication()">
+            <div class="slider-container">
+                <input
+                    class="slider"
+                    step="100"
+                    min="{{ initialOffer.minAmount }}"
+                    max="{{ initialOffer.maxAmount }}"
+                    type="range"
+                    [(ngModel)]="loanAmount"
+                    name="loanAmount"
+                >
+            </div>
+            <p class="centered">
+                Your amount:
+                <b>{{ loanAmount | currency:'EUR' }}</b>
+            </p>
+            <div class="offer-button-container">
+                <button
+                    type="submit"
+                    class="button is-info offer-button"
+                    [ngClass]="{'is-loading': isSendingLoanApplication}"
+                    [disabled]="!initialOffer"
+                >
+                    Apply for a loan!
+                </button>
+            </div>
+        </form>
+    </div>
+    <div *ngIf="applicationSent">
+        <div class="centered">
+            <p>Thank you for your application.</p>
+            <p>We will contact you shortly.</p>
         </div>
     </div>
 </div>

@@ -17,7 +17,12 @@ export class LoanOfferComponent implements OnInit {
   getInitialOfferForm: FormGroup;
 
   isGettingOffer: boolean;
+  isSendingLoanApplication: boolean;
+  applicationSent: boolean;
+
   initialOffer: InitialOfferReadModel;
+
+  loanAmount: number;
 
   constructor(private formBuilder: FormBuilder, private loanOfferService: LoanOfferService, private domainValidators: DomainValidators) { }
 
@@ -39,6 +44,18 @@ export class LoanOfferComponent implements OnInit {
       .subscribe(result => {
         this.isGettingOffer = false;
         this.initialOffer = result;
+        this.loanAmount = this.initialOffer.maxAmount;
+      });
+  }
+
+  sendLoanApplication(): void {
+    this.isSendingLoanApplication = true;
+    this.loanOfferService.sendLoanApplication(this.initialOffer.id, this.loanAmount)
+      .subscribe(() => {
+        this.isSendingLoanApplication = false;
+        this.applicationSent = true;
+        console.log('id: ' + this.initialOffer.id);
+        console.log('loan amount: ' + this.loanAmount);
       });
   }
 }
