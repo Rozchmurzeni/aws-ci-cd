@@ -6,48 +6,57 @@
                 You can check how much you can get by entering only PESEL number and e-mail address.
             </p>
         </div>
-        <div class="field">
-            <label class="label">PESEL</label>
-            <p class="control has-icons-left">
-                <input
-                    class="input"
-                    type="text"
+        <form
+            [formGroup]="getInitialOfferForm"
+            (ngSubmit)="getInitialOffer()"
+        >
+            <div class="field">
+                <label class="label">PESEL</label>
+                <p class="control has-icons-left">
+                    <input
+                        class="input"
+                        type="text"
+                        formControlName="pesel"
+                    >
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-address-card"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="field">
+                <label class="label">E-mail</label>
+                <p class="control has-icons-left">
+                    <input
+                        class="input"
+                        type="email"
+                        formControlName="email"
+                    >
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="offer-button-container">
+                <button
+                    type="submit"
+                    class="button is-info offer-button"
+                    [ngClass]="{'is-loading': isGettingOffer}"
+                    [disabled]="!getInitialOfferForm.valid"
                 >
-                <span class="icon is-small is-left">
-                    <i class="fas fa-address-card"></i>
-                </span>
-            </p>
-        </div>
-        <div class="field">
-            <label class="label">E-mail</label>
-            <p class="control has-icons-left">
-                <input
-                    class="input"
-                    type="email"
-                >
-                <span class="icon is-small is-left">
-                    <i class="fas fa-envelope"></i>
-                </span>
-            </p>
-        </div>
-        <div class="offer-button-container">
-            <button
-                class="button is-info offer-button"
-                [ngClass]="{'is-loading': isGettingOffer}"
-                (click)="getInitialOffer()"
-            >
-                Get offer!
-            </button>
-        </div>
+                    Get offer!
+                </button>
+            </div>
+        </form>
     </div>
     <div *ngIf="initialOffer">
+        <div></div>
         <div class="slider-container">
             <input
                 class="slider"
                 step="100"
-                min="{{initialOffer.minAmount}}"
-                max="{{initialOffer.maxAmount}}"
-                value="{{initialOffer.maxAmount}}"
+                min="{{ initialOffer.minAmount }}"
+                max="{{ initialOffer.maxAmount }}"
+                value="{{ initialOffer.maxAmount }}"
                 type="range"
             >
         </div>
