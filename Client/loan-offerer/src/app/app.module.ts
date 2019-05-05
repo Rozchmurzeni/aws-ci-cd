@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { LoanOfferComponent } from './loan-offer/loan-offer.component';
+import { DomainValidators } from './domain-validators';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,7 @@ import { LoanOfferComponent } from './loan-offer/loan-offer.component';
     FormsModule,
     ReactiveFormsModule,
   ],
-  providers: [LoanOfferService],
+  providers: [LoanOfferService, DomainValidators],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

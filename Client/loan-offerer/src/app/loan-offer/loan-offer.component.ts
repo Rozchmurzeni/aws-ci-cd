@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
 
 import { InitialOfferReadModel } from './../models/initial-offer-read-model';
 import { LoanOfferService } from './loan-offer.service';
 import { GetInitialOfferWriteModel } from '../models/get-initial-offer-write-model';
+import { DomainValidators } from '../domain-validators';
 
 @Component({
   selector: 'app-loan-offer',
@@ -18,14 +19,14 @@ export class LoanOfferComponent implements OnInit {
   isGettingOffer: boolean;
   initialOffer: InitialOfferReadModel;
 
-  constructor(private formBuilder: FormBuilder, private loanOfferService: LoanOfferService) { }
+  constructor(private formBuilder: FormBuilder, private loanOfferService: LoanOfferService, private domainValidators: DomainValidators) { }
 
   ngOnInit(): void {
     this.getInitialOfferModel = new GetInitialOfferWriteModel();
 
     this.getInitialOfferForm = this.formBuilder.group({
-      pesel: ['', Validators.required],
-      email: ['', Validators.required]
+      pesel: ['', [Validators.required, this.domainValidators.pesel]],
+      email: ['', [Validators.required, Validators.email]]
     });
   }
 
