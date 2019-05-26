@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+@import '../node_modules/bulma/css/bulma.min.css';
+@import '../node_modules/bulma/sass/utilities/_all.sass';
+@import '../node_modules/bulma/sass/grid/_all.sass';
+
+body,
+html {
+    overflow-y: auto;
+}
+
+.centered {
+    text-align: center;
+}
