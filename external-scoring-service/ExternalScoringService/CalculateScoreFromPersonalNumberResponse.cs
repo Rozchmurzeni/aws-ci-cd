@@ -4,9 +4,9 @@ using Newtonsoft.Json;
 
 namespace ExternalScoringService
 {
-    public class CalculateScoreFromPersonalNumberResult : APIGatewayProxyResponse
+    public class CalculateScoreFromPersonalNumberResponse : APIGatewayProxyResponse
     {
-        public CalculateScoreFromPersonalNumberResult(int score)
+        public CalculateScoreFromPersonalNumberResponse(int score)
         {
             StatusCode = (int) HttpStatusCode.OK;
             Body = JsonConvert.SerializeObject(new { Score = score });

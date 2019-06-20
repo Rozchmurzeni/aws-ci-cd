@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanOfferer", "LoanOfferer\LoanOfferer.csproj", "{E34FA15F-633A-429C-9268-4A8153FE5B08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanOfferer.Domain", "LoanOfferer.Domain\LoanOfferer.Domain.csproj", "{6861367F-6A4E-45F5-8513-F8C83E542493}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanOfferer.Domain.Infrastructure", "LoanOfferer.Domain.Infrastructure\LoanOfferer.Domain.Infrastructure.csproj", "{BF0D157D-A436-427E-A387-923E3C3E376B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E34FA15F-633A-429C-9268-4A8153FE5B08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E34FA15F-633A-429C-9268-4A8153FE5B08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E34FA15F-633A-429C-9268-4A8153FE5B08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E34FA15F-633A-429C-9268-4A8153FE5B08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6861367F-6A4E-45F5-8513-F8C83E542493}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6861367F-6A4E-45F5-8513-F8C83E542493}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6861367F-6A4E-45F5-8513-F8C83E542493}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6861367F-6A4E-45F5-8513-F8C83E542493}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF0D157D-A436-427E-A387-923E3C3E376B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF0D157D-A436-427E-A387-923E3C3E376B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF0D157D-A436-427E-A387-923E3C3E376B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF0D157D-A436-427E-A387-923E3C3E376B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
