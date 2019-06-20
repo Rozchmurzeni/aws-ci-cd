@@ -1,0 +1,12 @@
+{
+  "profile"     : "default",
+  "region"      : "eu-central-1",
+  "configuration" : "Release",
+  "framework"     : "netcoreapp2.1",
+  "template"      : "template.yaml",
+  "s3-bucket"     : "<Your_deploy_code_bucket>",
+  "s3-prefix"     : "<Your_deploy_code_location_in_bucket>",
+  "template-parameters" : "\"InputApiKeyValue\"=\"GdATdPRUrLIrkVTEYKvaUdblIpsdAgWwzfIwEpAy\"",
+  "stack-name"          : "external-scoring-calculating-service",
+  "stack-wait"          : true
+}
