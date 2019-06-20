@@ -7,7 +7,7 @@ namespace ExternalScoringService
 {
     public class CalculateScoreFromPersonalNumber
     {
-        public CalculateScoreFromPersonalNumberResult CalculateScoreFromPersonalNumberLambda(CalculateScoreFromPersonalNumberRequest request)
+        public CalculateScoreFromPersonalNumberResponse CalculateScoreFromPersonalNumberLambda(CalculateScoreFromPersonalNumberRequest request)
         {
             if (String.IsNullOrWhiteSpace(request.PeselNumber))
             {
@@ -16,7 +16,7 @@ namespace ExternalScoringService
 
             var peselNumber = new PeselNumber(request.PeselNumber);
 
-            return new CalculateScoreFromPersonalNumberResult(ScoreCalculator.Calculate(peselNumber));
+            return new CalculateScoreFromPersonalNumberResponse(ScoreCalculator.Calculate(peselNumber));
         }
     }
 }
