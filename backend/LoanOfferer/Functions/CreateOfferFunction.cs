@@ -18,9 +18,10 @@ namespace LoanOfferer.Functions
 
         private static CreateOfferService CreateOfferService()
         {
+            var externalApiScoringServiceConfig = new EnvironmentVariablesExternalApiScoringServiceConfig();
             var loanOfferRepository = new LoanOfferDynamoDbRepository();
             var loanOfferFactory = new LoanOfferFactory();
-            var scoringService = new ExternalApiScoringService();
+            var scoringService = new ExternalApiScoringService(externalApiScoringServiceConfig);
             var service = new CreateOfferService(loanOfferFactory, loanOfferRepository, scoringService);
             
             return service;

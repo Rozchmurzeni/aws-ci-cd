@@ -8,4 +8,9 @@
       <ProjectReference Include="..\LoanOfferer.Domain\LoanOfferer.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.101.27" />
+      <PackageReference Include="RestSharp" Version="106.6.9" />
+    </ItemGroup>
+
 </Project>
