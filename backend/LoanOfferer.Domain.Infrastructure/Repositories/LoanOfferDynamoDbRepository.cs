@@ -38,9 +38,9 @@ namespace LoanOfferer.Domain.Infrastructure.Repositories
                 Item = new Dictionary<string, AttributeValue>
                 {
                     { "Id", new AttributeValue { S = snapshot.Id.ToString() } },
-                    { "Id", new AttributeValue { S = snapshot.PeselNumber } },
-                    { "Id", new AttributeValue { S = snapshot.EmailAddress } },
-                    { "Id", new AttributeValue { N = snapshot.MaxLoanAmount.ToString() } },
+                    { "PeselNumber", new AttributeValue { S = snapshot.PeselNumber } },
+                    { "EmailAddress", new AttributeValue { S = snapshot.EmailAddress } },
+                    { "MaxLoanAmount", new AttributeValue { N = snapshot.MaxLoanAmount.ToString() } },
                 }
             };
     }
