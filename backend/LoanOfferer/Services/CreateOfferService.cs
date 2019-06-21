@@ -1,4 +1,3 @@
-using LoanOfferer.Domain;
 using LoanOfferer.Domain.Factories;
 using LoanOfferer.Domain.Repositories;
 using LoanOfferer.Domain.Services;
