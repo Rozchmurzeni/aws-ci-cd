@@ -1,0 +1,183 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Cope Pipeline for workshops app
+Resources:
+  CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+                - cloudformation.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CodePipelinePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: "cloudformation:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "codebuild:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "s3:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "apigateway:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "lambda:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "dynamodb:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "iam:*"
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource: "*"
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: 
+              - codebuild.amazonaws.com
+              - codepipeline.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CodeBuildPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: "s3:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "logs:*"
+                Resource: "*"
+  ArtifactsBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: workshops-app-cp-artifacts
+      VersioningConfiguration:
+        Status: Enabled
+  Project:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: BuildWorkshopsApp
+      Description: Build workshops app
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:2.0
+        EnvironmentVariables:
+          - Name: PackageBucket
+            Value: !Ref ArtifactsBucket
+          - Name: PackageBucketKey
+            Value: WorkshopsApp/CodePackage
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: backend/buildspec.yaml
+      TimeoutInMinutes: 10
+  CodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: WorkshopsApp
+      RoleArn: !GetAtt CodePipelineRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref ArtifactsBucket
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceCode
+              Region: eu-central-1
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Version: '1'
+                Provider: GitHub
+              Configuration:
+                Owner: wojciech-dabrowski
+                Repo: ci-cd-cloud-workshops
+                Branch: cp-test
+                OAuthToken: your-token
+                PollForSourceChanges: false
+              OutputArtifacts:
+                - Name: SourceCode
+              RunOrder: 1
+            - Name: TemplateConfig
+              Region: eu-central-1
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: S3
+                Version: '1'
+              Configuration:
+                S3Bucket: !Ref ArtifactsBucket
+                S3ObjectKey: WorkshopsApp/template-config.zip
+              OutputArtifacts:
+                - Name: TemplateConfig
+              RunOrder: 1
+        - Name: Build
+          Actions:
+            - Name: BuildApp
+              Region: eu-central-1
+              InputArtifacts:
+                - Name: SourceCode
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: '1'
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: BuildWorkshopsApp
+              OutputArtifacts:
+                - Name: TemplateOutput
+        - Name: Deploy
+          Actions:
+            - Name: CreateChangeSet
+              InputArtifacts:
+                - Name: TemplateOutput
+                - Name: TemplateConfig
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ActionMode: CHANGE_SET_REPLACE
+                StackName: loan-offerer
+                ChangeSetName: CodePipelineChangeSet
+                TemplatePath: TemplateOutput::template-output.yaml
+                TemplateConfiguration: TemplateConfig::template.config
+                Capabilities: CAPABILITY_IAM
+                RoleArn: !GetAtt CodePipelineRole.Arn
+              RunOrder: 1
+            - Name: DeployChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ActionMode: CHANGE_SET_EXECUTE
+                StackName: loan-offerer
+                ChangeSetName: CodePipelineChangeSet
+              RunOrder: 2

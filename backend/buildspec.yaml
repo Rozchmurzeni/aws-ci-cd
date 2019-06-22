@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      dotnet: 2.2
+  build:
+    commands:
+      - dotnet publish -c Release backend
+  post_build:
+    commands:
+      - aws cloudformation package --template-file backend/LoanOfferer/template.yaml --s3-bucket ${PackageBucket} --s3-prefix ${PackageBucketKey} --output-template-file backend/LoanOfferer/template-output.yaml
+artifacts:
+  files:
+    - template-output.yaml
+  type: zip
+  base-directory: backend/LoanOfferer

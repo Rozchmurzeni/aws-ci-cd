@@ -1,0 +1,1 @@
+aws cloudformation deploy --template-file code-pipeline.yaml --stack-name workshops-app-cp --capabilities CAPABILITY_IAM --region eu-central-1
