@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Amazon;
 using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 using LoanOfferer.Domain.Services;
@@ -14,11 +15,11 @@ namespace LoanOfferer.Domain.Infrastructure.Services
         private readonly IAmazonSimpleEmailService _amazonSimpleEmailService;
         private const string LoanRequestedEmailSubject = "Congratulations!";
         private const string MessageTemplate = "{0}";
-        private const string SourceEmail = "no-reply@loan-offerer.com";
+        private const string SourceEmail = "ci.cd.workshops@gmail.com";
 
         public SesEmailNotificationService()
         {
-            _amazonSimpleEmailService = new AmazonSimpleEmailServiceClient();
+            _amazonSimpleEmailService = new AmazonSimpleEmailServiceClient(RegionEndpoint.EUWest1);
         }
 
         public async Task SendLoanRequestedMessage(EmailAddress emailAddress, LoanAmount requestedLoanAmount)
