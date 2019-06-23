@@ -17,7 +17,7 @@ Resources:
       ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
       PathPart: 'loan-offer'
       RestApiId: !Ref ApiGatewayRestApi
-  ApiGatewayMethod:
+  CreateOfferMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       ApiKeyRequired: true
@@ -41,6 +41,30 @@ Resources:
       OperationName: 'calculate'
       ResourceId: !Ref ApiGatewayResource
       RestApiId: !Ref ApiGatewayRestApi
+  RequestLoanMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      HttpMethod: POST
+      RequestValidatorId: !Ref RequestValidator
+      RequestModels:
+        application/json: !Ref RequestLoanRequestModel
+      MethodResponses:
+        - ResponseModels:
+            application/json: !Ref RequestLoanResponseModel
+          StatusCode: 200
+      Integration:
+        ConnectionType: INTERNET
+        Credentials: !GetAtt ApiGatewayIamRole.Arn
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: WHEN_NO_MATCH
+        TimeoutInMillis: 29000
+        Type: AWS_PROXY
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RequestLoanLambdaFunction.Arn}/invocations'
+      OperationName: 'calculate'
+      ResourceId: !Ref ApiGatewayResource
+      RestApiId: !Ref ApiGatewayRestApi
   ApiGatewayStage:
     Type: AWS::ApiGateway::Stage
     Properties:
@@ -50,7 +74,9 @@ Resources:
       StageName: 'v1'
   ApiGatewayDeployment:
     Type: AWS::ApiGateway::Deployment
-    DependsOn: ApiGatewayMethod
+    DependsOn: 
+      - RequestLoanMethod
+      - CreateOfferMethod
     Properties:
       Description: Lambda API Deployment
       RestApiId: !Ref ApiGatewayRestApi
@@ -112,6 +138,31 @@ Resources:
             type: string
           maxAmount:
             type: number
+  RequestLoanRequestModel:
+    Type: 'AWS::ApiGateway::Model'
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ContentType: application/json
+      Name: RequestLoanRequestModel
+      Schema:
+        $schema: 'http://json-schema.org/draft-04/schema#'
+        title: RequestLoanRequestModel
+        type: object
+        properties:
+          offerId:
+            type: string
+          requestedAmount:
+            type: string
+  RequestLoanResponseModel:
+    Type: 'AWS::ApiGateway::Model'
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ContentType: application/json
+      Name: RequestLoanResponseModel
+      Schema:
+        $schema: 'http://json-schema.org/draft-04/schema#'
+        title: RequestLoanResponseModel
+        type: object
   RequestValidator:
     Type: AWS::ApiGateway::RequestValidator
     Properties:
@@ -144,24 +195,52 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: AWS Lambda function for creating offer
-      Handler: LoanOfferer::LoanOfferer.Functions.CreateOfferFunction::Execute
+      Handler: LoanOfferer::LoanOfferer.Functions.CreateOfferFunction::ExecuteAsync
       CodeUri: bin/Release/netcoreapp2.1/publish
       Runtime: dotnetcore2.1
       MemorySize: 256
-      Role: !GetAtt LambdaIamRole.Arn
+      Role: !GetAtt CreateOfferLambdaIamRole.Arn
       Timeout: 180
       Tracing: Active
       Environment:
         Variables:
           ApiBaseUrl: 'ApiBaseUrl'
           ApiKey: 'ApiKey'
-  LambdaIamRole:
+  RequestLoanLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: AWS Lambda function for requesting a loan
+      Handler: LoanOfferer::LoanOfferer.Functions.RequestLoanFunction::ExecuteAsync
+      CodeUri: bin/Release/netcoreapp2.1/publish
+      Runtime: dotnetcore2.1
+      MemorySize: 256
+      Role: !GetAtt RequestLoanLambdaIamRole.Arn
+      Timeout: 180
+      Tracing: Active
+  CreateOfferLambdaIamRole:
     Type: AWS::IAM::Role
     Properties:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+  RequestLoanLambdaIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/AmazonSESFullAccess
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
