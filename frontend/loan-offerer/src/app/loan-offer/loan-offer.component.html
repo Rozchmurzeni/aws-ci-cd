@@ -54,7 +54,7 @@
             <p>
                 You can get up to
                 <b>
-                    {{ initialOffer.maxAmount | currency:'EUR' }}
+                    {{ initialOffer.maxLoanAmount | currency:'EUR' }}
                 </b>
                 !
             </p>
@@ -65,8 +65,8 @@
                 <input
                     class="slider"
                     step="100"
-                    min="{{ initialOffer.minAmount }}"
-                    max="{{ initialOffer.maxAmount }}"
+                    min="{{ minLoanAmount }}"
+                    max="{{ initialOffer.maxLoanAmount }}"
                     type="range"
                     [(ngModel)]="loanAmount"
                     name="loanAmount"

@@ -1,38 +1,39 @@
-import { InitialOfferReadModel } from '../models/initial-offer-read-model';
-import { Injectable } from '@angular/core';
-import { Observable, from } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+
+import { InitialOfferReadModel } from "../models/initial-offer-read-model";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { ConfigProvider } from "../config-provider";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class LoanOfferService {
-  constructor() { }
+  constructor(private http: HttpClient, private config: ConfigProvider) {}
 
-  getLoanOffer(pesel: string, email: string): Observable<InitialOfferReadModel> {
-    // Mock implementation, actual implementation is TODO
-
-    const promise = new Promise<InitialOfferReadModel>(
-      resolve => setTimeout(
-        () => resolve(this.getMockedLoanOffer()), 3000));
-
-    return from(promise);
+  getLoanOffer(
+    pesel: string,
+    email: string
+  ): Observable<InitialOfferReadModel> {
+    const model = { peselNumber: pesel, emailAddress: email };
+    return this.http.post<InitialOfferReadModel>(
+      this.config.loanOfferApiUrl(),
+      model,
+      { headers: this.getHeaders() }
+    );
   }
 
   sendLoanApplication(id: string, loanAmount: number): Observable<string> {
-    const promise = new Promise<string>(
-      resolve => setTimeout(
-        () => resolve(), 3000));
-
-    return from(promise);
+    const model = { offerId: id, requestedAmount: loanAmount };
+    return this.http.put<string>(this.config.loanOfferApiUrl(), model, {
+      headers: this.getHeaders()
+    });
   }
 
-  private getMockedLoanOffer(): InitialOfferReadModel {
-    const initialOfferResult: InitialOfferReadModel = {
-      id: '6fc0a80c-33d4-4440-a5c7-c5b17928eb38',
-      minAmount: 1000,
-      maxAmount: 5000
-    };
-
-    return initialOfferResult;
+  private getHeaders(): any {
+    return new HttpHeaders({
+      "Content-Type": "application/json",
+      "x-api-key": this.config.loanOfferApiUrl()
+    });
   }
 }
