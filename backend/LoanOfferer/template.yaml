@@ -38,7 +38,7 @@ Resources:
         TimeoutInMillis: 29000
         Type: AWS_PROXY
         Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateOfferLambdaFunction.Arn}/invocations'
-      OperationName: 'calculate'
+      OperationName: 'create-offer'
       ResourceId: !Ref ApiGatewayResource
       RestApiId: !Ref ApiGatewayRestApi
   RequestLoanMethod:
@@ -46,7 +46,7 @@ Resources:
     Properties:
       ApiKeyRequired: true
       AuthorizationType: NONE
-      HttpMethod: POST
+      HttpMethod: PUT
       RequestValidatorId: !Ref RequestValidator
       RequestModels:
         application/json: !Ref RequestLoanRequestModel
@@ -62,7 +62,7 @@ Resources:
         TimeoutInMillis: 29000
         Type: AWS_PROXY
         Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RequestLoanLambdaFunction.Arn}/invocations'
-      OperationName: 'calculate'
+      OperationName: 'request-loan'
       ResourceId: !Ref ApiGatewayResource
       RestApiId: !Ref ApiGatewayRestApi
   ApiGatewayStage:
@@ -184,13 +184,20 @@ Resources:
             Action:
               - sts:AssumeRole
       Policies:
-        - PolicyName: LambdaAccess
+        - PolicyName: CreateOfferLambdaAccess
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
               - Effect: 'Allow'
                 Action: 'lambda:*'
-                Resource: !GetAtt CreateOfferLambdaFunction.Arn    
+                Resource: !GetAtt CreateOfferLambdaFunction.Arn
+        - PolicyName: RequestLoanLambdaAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action: 'lambda:*'
+                Resource: !GetAtt RequestLoanLambdaFunction.Arn
   CreateOfferLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:

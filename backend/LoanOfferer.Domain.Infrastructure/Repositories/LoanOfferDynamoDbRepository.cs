@@ -56,8 +56,8 @@ namespace LoanOfferer.Domain.Infrastructure.Repositories
             var item = response.Item;
             return _loanOfferFactory.Create(
                 item[IdDynamoFieldName].S,
-                item[EmailAddressDynamoFieldName].S,
                 item[PeselNumberDynamoFieldName].S,
+                item[EmailAddressDynamoFieldName].S,
                 Int32.Parse(item[MaxLoanAmountDynamoFieldName].N)
             );
         }
