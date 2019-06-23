@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using LoanOfferer.Domain.Infrastructure.Factories;
 using LoanOfferer.Domain.Infrastructure.Repositories;
@@ -12,18 +13,18 @@ namespace LoanOfferer.Functions
 {
     public class CreateOfferFunction
     {
-        public CreateOfferResponse Execute(CreateOfferRequest request)
+        public async Task<CreateOfferResponse> ExecuteAsync(CreateOfferRequest request)
         {
             var service = CreateOfferService();
-            var loanOffer = service.CreateOffer(request.PeselNumber, request.EmailAddress);
-            return new CreateOfferResponse(loanOffer.Id, loanOffer.MaxLoanAmount);
+            var loanOffer = await service.CreateOfferAsync(request.PeselNumber, request.EmailAddress);
+            return CreateOfferResponse.Success(loanOffer.Id.Value, loanOffer.MaxLoanAmount.Value);
         }
 
         private static CreateOfferService CreateOfferService()
         {
             var externalApiScoringServiceConfig = new EnvironmentVariablesExternalApiScoringServiceConfig();
-            var loanOfferRepository = new LoanOfferDynamoDbRepository();
             var loanOfferFactory = new LoanOfferFactory();
+            var loanOfferRepository = new LoanOfferDynamoDbRepository(loanOfferFactory);
             var scoringService = new ExternalApiScoringService(externalApiScoringServiceConfig);
             var service = new CreateOfferService(loanOfferFactory, loanOfferRepository, scoringService);
             
