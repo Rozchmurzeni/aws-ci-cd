@@ -74,7 +74,7 @@ Resources:
       BucketName: workshops-app-cp-artifacts
       VersioningConfiguration:
         Status: Enabled
-  Project:
+  BuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: BuildWorkshopsApp
@@ -94,6 +94,22 @@ Resources:
       Source:
         Type: CODEPIPELINE
         BuildSpec: backend/buildspec.yaml
+      TimeoutInMinutes: 10
+  TestProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: TestWorkshopsApp
+      Description: Test workshops app
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:2.0
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: backend/testspec.yaml
       TimeoutInMinutes: 10
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -150,6 +166,21 @@ Resources:
                 ProjectName: BuildWorkshopsApp
               OutputArtifacts:
                 - Name: TemplateOutput
+        - Name: Test
+          Actions:
+            - Name: TestApp
+              Region: eu-central-1
+              InputArtifacts:
+                - Name: SourceCode
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: '1'
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: TestWorkshopsApp
+              OutputArtifacts:
+                - Name: TestResult
         - Name: Deploy
           Actions:
             - Name: CreateChangeSet
