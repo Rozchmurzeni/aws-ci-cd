@@ -14,6 +14,7 @@ namespace LoanOfferer.Domain.Infrastructure.Services
         private readonly IAmazonSimpleEmailService _amazonSimpleEmailService;
         private const string LoanRequestedEmailSubject = "Congratulations!";
         private const string MessageTemplate = "{0}";
+        private const string SourceEmail = "no-reply@loan-offerer.com";
 
         public SesEmailNotificationService()
         {
@@ -34,6 +35,7 @@ namespace LoanOfferer.Domain.Infrastructure.Services
         private static SendEmailRequest CreateSendEmailRequest(EmailAddress emailAddress, LoanAmount requestedLoanAmount)
             => new SendEmailRequest
             {
+                Source = SourceEmail,
                 Destination = new Destination { ToAddresses = new List<string> { emailAddress.Value } },
                 Message = new Message
                 {
