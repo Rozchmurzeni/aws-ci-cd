@@ -7,7 +7,7 @@ namespace LoanOfferer.Models.Responses
 {
     public class CreateOfferResponse : APIGatewayProxyResponse
     {
-        public CreateOfferResponse(Guid id, int maxLoanAmount)
+        private CreateOfferResponse(Guid id, int maxLoanAmount)
         {
             StatusCode = (int) HttpStatusCode.Created;
             Body = JsonConvert.SerializeObject(
@@ -18,5 +18,7 @@ namespace LoanOfferer.Models.Responses
                 }
             );
         }
+
+        public static CreateOfferResponse Success(Guid id, int maxLoanAmount) => new CreateOfferResponse(id, maxLoanAmount);
     }
 }

@@ -1,7 +1,8 @@
+using System.Threading.Tasks;
+using LoanOfferer.Domain.Entities;
 using LoanOfferer.Domain.Factories;
 using LoanOfferer.Domain.Repositories;
 using LoanOfferer.Domain.Services;
-using LoanOfferer.Domain.Snapshots;
 
 namespace LoanOfferer.Services
 {
@@ -18,12 +19,12 @@ namespace LoanOfferer.Services
             _scoringService = scoringService;
         }
 
-        public LoanOfferSnapshot CreateOffer(string peselNumber, string emailAddress)
+        public async Task<LoanOffer> CreateOfferAsync(string peselNumber, string emailAddress)
         {
             var loanOffer = _loanOfferFactory.Create(peselNumber, emailAddress);
             loanOffer.CalculateOffer(_scoringService);
-            _loanOfferRepository.Add(loanOffer);
-            return loanOffer.GetSnapshot();
+            await _loanOfferRepository.AddAsync(loanOffer);
+            return loanOffer;
         }
     }
 }
