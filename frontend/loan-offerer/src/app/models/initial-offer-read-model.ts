@@ -1,5 +1,4 @@
 export class InitialOfferReadModel {
-    id: string;
-    minAmount: number;
-    maxAmount: number;
+  id: string;
+  maxLoanAmount: number;
 }
