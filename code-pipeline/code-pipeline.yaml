@@ -132,7 +132,7 @@ Resources:
               Configuration:
                 Owner: wojciech-dabrowski
                 Repo: ci-cd-cloud-workshops
-                Branch: cp-test
+                Branch: master
                 OAuthToken: your-token
                 PollForSourceChanges: false
               OutputArtifacts:
