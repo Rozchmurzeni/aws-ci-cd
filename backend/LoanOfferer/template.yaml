@@ -1,0 +1,274 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda and REST API for external scoring service
+Parameters:
+  InputApiKeyValue:
+    Type: String
+    MinLength: 30
+    MaxLength: 128
+Resources:
+  ApiGatewayRestApi:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: Loan offerer REST API
+  ApiGatewayResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+      PathPart: 'loan-offer'
+      RestApiId: !Ref ApiGatewayRestApi
+  CreateOfferMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      HttpMethod: POST
+      RequestValidatorId: !Ref RequestValidator
+      RequestModels:
+        application/json: !Ref CreateOfferRequestModel
+      MethodResponses:
+        - ResponseModels:
+            application/json: !Ref CreateOfferResponseModel
+          StatusCode: 201
+      Integration:
+        ConnectionType: INTERNET
+        Credentials: !GetAtt ApiGatewayIamRole.Arn
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: WHEN_NO_MATCH
+        TimeoutInMillis: 29000
+        Type: AWS_PROXY
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateOfferLambdaFunction.Arn}/invocations'
+      OperationName: 'create-offer'
+      ResourceId: !Ref ApiGatewayResource
+      RestApiId: !Ref ApiGatewayRestApi
+  RequestLoanMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      HttpMethod: PUT
+      RequestValidatorId: !Ref RequestValidator
+      RequestModels:
+        application/json: !Ref RequestLoanRequestModel
+      MethodResponses:
+        - ResponseModels:
+            application/json: !Ref RequestLoanResponseModel
+          StatusCode: 200
+      Integration:
+        ConnectionType: INTERNET
+        Credentials: !GetAtt ApiGatewayIamRole.Arn
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: WHEN_NO_MATCH
+        TimeoutInMillis: 29000
+        Type: AWS_PROXY
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RequestLoanLambdaFunction.Arn}/invocations'
+      OperationName: 'request-loan'
+      ResourceId: !Ref ApiGatewayResource
+      RestApiId: !Ref ApiGatewayRestApi
+  ApiGatewayStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref ApiGatewayDeployment
+      Description: Lambda API Stage v1
+      RestApiId: !Ref ApiGatewayRestApi
+      StageName: 'v1'
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: 
+      - RequestLoanMethod
+      - CreateOfferMethod
+    Properties:
+      Description: Lambda API Deployment
+      RestApiId: !Ref ApiGatewayRestApi
+  ApiKey:
+    Type: 'AWS::ApiGateway::ApiKey'
+    Properties:
+      Name: LoanOffererApiKeyv2
+      Description: Loan offerer REST API Key
+      Enabled: 'true'
+      GenerateDistinctId: false
+      Value: !Ref InputApiKeyValue
+  ApiUsagePlan:
+    Type: "AWS::ApiGateway::UsagePlan"
+    Properties:
+      ApiStages:
+        - ApiId: !Ref ApiGatewayRestApi
+          Stage: !Ref ApiGatewayStage
+      Description: !Join [" ", [{"Ref": "AWS::StackName"}, "usage plan"]]
+      Quota:
+        Limit: 10000
+        Period: MONTH
+      Throttle:
+        BurstLimit: 10
+        RateLimit: 10
+      UsagePlanName: !Join ["", [{"Ref": "AWS::StackName"}, "-usage-plan"]]
+  ApiUsagePlanKey:
+    Type: "AWS::ApiGateway::UsagePlanKey"
+    Properties:
+      KeyId: !Ref ApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref ApiUsagePlan
+  CreateOfferRequestModel:
+    Type: 'AWS::ApiGateway::Model'
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ContentType: application/json
+      Name: CreateOfferRequestModel
+      Schema:
+        $schema: 'http://json-schema.org/draft-04/schema#'
+        title: CreateOfferRequestModel
+        type: object
+        properties:
+          peselNumber:
+            type: string
+          emailAddress:
+            type: string
+  CreateOfferResponseModel:
+    Type: 'AWS::ApiGateway::Model'
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ContentType: application/json
+      Name: CreateOfferResponseModel
+      Schema:
+        $schema: 'http://json-schema.org/draft-04/schema#'
+        title: CreateOfferResponseModel
+        type: object
+        properties:
+          id:
+            type: string
+          maxAmount:
+            type: number
+  RequestLoanRequestModel:
+    Type: 'AWS::ApiGateway::Model'
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ContentType: application/json
+      Name: RequestLoanRequestModel
+      Schema:
+        $schema: 'http://json-schema.org/draft-04/schema#'
+        title: RequestLoanRequestModel
+        type: object
+        properties:
+          offerId:
+            type: string
+          requestedAmount:
+            type: string
+  RequestLoanResponseModel:
+    Type: 'AWS::ApiGateway::Model'
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ContentType: application/json
+      Name: RequestLoanResponseModel
+      Schema:
+        $schema: 'http://json-schema.org/draft-04/schema#'
+        title: RequestLoanResponseModel
+        type: object
+  RequestValidator:
+    Type: AWS::ApiGateway::RequestValidator
+    Properties:
+      Name: RequestValidator
+      RestApiId: !Ref ApiGatewayRestApi
+      ValidateRequestBody: true
+      ValidateRequestParameters: false   
+  ApiGatewayIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CreateOfferLambdaAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action: 'lambda:*'
+                Resource: !GetAtt CreateOfferLambdaFunction.Arn
+        - PolicyName: RequestLoanLambdaAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action: 'lambda:*'
+                Resource: !GetAtt RequestLoanLambdaFunction.Arn
+  CreateOfferLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: AWS Lambda function for creating offer
+      Handler: LoanOfferer::LoanOfferer.Functions.CreateOfferFunction::ExecuteAsync
+      CodeUri: bin/Release/netcoreapp2.1/publish
+      Runtime: dotnetcore2.1
+      MemorySize: 256
+      Role: !GetAtt CreateOfferLambdaIamRole.Arn
+      Timeout: 180
+      Tracing: Active
+      Environment:
+        Variables:
+          ApiBaseUrl: 'ApiBaseUrl'
+          ApiKey: 'ApiKey'
+  RequestLoanLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: AWS Lambda function for requesting a loan
+      Handler: LoanOfferer::LoanOfferer.Functions.RequestLoanFunction::ExecuteAsync
+      CodeUri: bin/Release/netcoreapp2.1/publish
+      Runtime: dotnetcore2.1
+      MemorySize: 256
+      Role: !GetAtt RequestLoanLambdaIamRole.Arn
+      Timeout: 180
+      Tracing: Active
+  CreateOfferLambdaIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+  RequestLoanLambdaIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/AmazonSESFullAccess
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+  LoanOfferDynamoDbTable: 
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: "Id"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "Id"
+          KeyType: "HASH"
+      TableName: LoanOffer
+      ProvisionedThroughput:
+        ReadCapacityUnits: 10
+        WriteCapacityUnits: 10
