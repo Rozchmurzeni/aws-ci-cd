@@ -1,0 +1,13 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      dotnet: 2.2
+  build:
+    commands:
+      - dotnet test -c Release backend -l:trx
+artifacts:
+  files:
+    - '*.trx'
+  base-directory: backend/LoanOfferer.Domain.Test/TestResults
