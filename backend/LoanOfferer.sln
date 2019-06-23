@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanOfferer.Domain", "LoanO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanOfferer.Domain.Infrastructure", "LoanOfferer.Domain.Infrastructure\LoanOfferer.Domain.Infrastructure.csproj", "{BF0D157D-A436-427E-A387-923E3C3E376B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanOfferer.Domain.Test", "LoanOfferer.Domain.Test\LoanOfferer.Domain.Test.csproj", "{7CAD7860-B318-42AB-851A-3C9AAD2654D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{BF0D157D-A436-427E-A387-923E3C3E376B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF0D157D-A436-427E-A387-923E3C3E376B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF0D157D-A436-427E-A387-923E3C3E376B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CAD7860-B318-42AB-851A-3C9AAD2654D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CAD7860-B318-42AB-851A-3C9AAD2654D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CAD7860-B318-42AB-851A-3C9AAD2654D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CAD7860-B318-42AB-851A-3C9AAD2654D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
