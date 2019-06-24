@@ -4,6 +4,8 @@ import { Observable } from "rxjs";
 import { InitialOfferReadModel } from "../models/initial-offer-read-model";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { ConfigProvider } from "../config-provider";
+import { GetInitialOfferWriteModel } from "../models/get-initial-offer-write-model";
+import { RequestLoanWriteModel } from '../models/request-loan-write-model';
 
 @Injectable({
   providedIn: "root"
@@ -12,10 +14,8 @@ export class LoanOfferService {
   constructor(private http: HttpClient, private config: ConfigProvider) {}
 
   getLoanOffer(
-    pesel: string,
-    email: string
+    model: GetInitialOfferWriteModel
   ): Observable<InitialOfferReadModel> {
-    const model = { peselNumber: pesel, emailAddress: email };
     return this.http.post<InitialOfferReadModel>(
       this.config.loanOfferApiUrl(),
       model,
@@ -23,8 +23,7 @@ export class LoanOfferService {
     );
   }
 
-  sendLoanApplication(id: string, loanAmount: number): Observable<string> {
-    const model = { offerId: id, requestedAmount: loanAmount };
+  sendLoanApplication(model: RequestLoanWriteModel): Observable<string> {
     return this.http.put<string>(this.config.loanOfferApiUrl(), model, {
       headers: this.getHeaders()
     });
@@ -33,7 +32,7 @@ export class LoanOfferService {
   private getHeaders(): any {
     return new HttpHeaders({
       "Content-Type": "application/json",
-      "x-api-key": this.config.loanOfferApiUrl()
+      "x-api-key": this.config.loanOfferApiKey()
     });
   }
 }

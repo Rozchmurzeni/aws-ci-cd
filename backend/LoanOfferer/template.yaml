@@ -30,6 +30,8 @@ Resources:
         - ResponseModels:
             application/json: !Ref CreateOfferResponseModel
           StatusCode: 201
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: "'*'"
       Integration:
         ConnectionType: INTERNET
         Credentials: !GetAtt ApiGatewayIamRole.Arn
@@ -54,6 +56,8 @@ Resources:
         - ResponseModels:
             application/json: !Ref RequestLoanResponseModel
           StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: "'*'"
       Integration:
         ConnectionType: INTERNET
         Credentials: !GetAtt ApiGatewayIamRole.Arn
@@ -65,6 +69,37 @@ Resources:
       OperationName: 'request-loan'
       ResourceId: !Ref ApiGatewayResource
       RestApiId: !Ref ApiGatewayRestApi
+  OptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      ResourceId:
+        Ref: ApiGatewayResource
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,PUT,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        Type: MOCK
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
   ApiGatewayStage:
     Type: AWS::ApiGateway::Stage
     Properties:
@@ -74,7 +109,7 @@ Resources:
       StageName: 'v1'
   ApiGatewayDeployment:
     Type: AWS::ApiGateway::Deployment
-    DependsOn: 
+    DependsOn:
       - RequestLoanMethod
       - CreateOfferMethod
     Properties:
@@ -169,7 +204,7 @@ Resources:
       Name: RequestValidator
       RestApiId: !Ref ApiGatewayRestApi
       ValidateRequestBody: true
-      ValidateRequestParameters: false   
+      ValidateRequestParameters: false
   ApiGatewayIamRole:
     Type: AWS::IAM::Role
     Properties:
@@ -257,16 +292,14 @@ Resources:
                 - lambda.amazonaws.com
             Action:
               - sts:AssumeRole
-  LoanOfferDynamoDbTable: 
+  LoanOfferDynamoDbTable:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
-        -
-          AttributeName: "Id"
+        - AttributeName: "Id"
           AttributeType: "S"
       KeySchema:
-        -
-          AttributeName: "Id"
+        - AttributeName: "Id"
           KeyType: "HASH"
       TableName: LoanOffer
       ProvisionedThroughput:
