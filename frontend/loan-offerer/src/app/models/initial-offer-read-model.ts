@@ -1,4 +1,4 @@
 export class InitialOfferReadModel {
-  id: string;
-  maxLoanAmount: number;
+  Id: string;
+  MaxLoanAmount: number;
 }

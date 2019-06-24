@@ -1,4 +1,4 @@
 export class GetInitialOfferWriteModel {
-    pesel: string;
-    email: string;
+    PeselNumber: string;
+    EmailAddress: string;
 }
