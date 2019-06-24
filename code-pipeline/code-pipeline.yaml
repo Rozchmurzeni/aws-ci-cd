@@ -65,6 +65,9 @@ Resources:
                 Action: "s3:*"
                 Resource: "*"
               - Effect: Allow
+                Action: "cloudfront:*"
+                Resource: "*"
+              - Effect: Allow
                 Action: "logs:*"
                 Resource: "*"
   ArtifactsBucket:
@@ -74,11 +77,11 @@ Resources:
       BucketName: workshops-app-cp-artifacts
       VersioningConfiguration:
         Status: Enabled
-  BuildProject:
+  BuildBackendProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: BuildWorkshopsApp
-      Description: Build workshops app
+      Name: BuildWorkshopsBackendApp
+      Description: Build workshops backend app
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Artifacts:
         Type: CODEPIPELINE
@@ -90,16 +93,16 @@ Resources:
           - Name: PackageBucket
             Value: !Ref ArtifactsBucket
           - Name: PackageBucketKey
-            Value: WorkshopsApp/CodePackage
+            Value: WorkshopsBackendApp/CodePackage
       Source:
         Type: CODEPIPELINE
         BuildSpec: backend/buildspec.yaml
       TimeoutInMinutes: 10
-  TestProject:
+  TestBackendProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: TestWorkshopsApp
-      Description: Test workshops app
+      Name: TestWorkshopsBackendApp
+      Description: Test workshops backend app
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Artifacts:
         Type: CODEPIPELINE
@@ -111,10 +114,31 @@ Resources:
         Type: CODEPIPELINE
         BuildSpec: backend/testspec.yaml
       TimeoutInMinutes: 10
-  CodePipeline:
+  BuildFrontendProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: BuildWorkshopsFrontendApp
+      Description: Build workshops frontend app
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:2.0
+        EnvironmentVariables:
+          - Name: PackageBucket
+            Value: cloud-workshops-web-app
+          - Name: CloudfrontId
+            Value: EL4TKV8EQ0UC0
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: frontend/loan-offerer/buildspec.yaml
+      TimeoutInMinutes: 10
+  BackendCodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: WorkshopsApp
+      Name: WorkshopsBackendApp
       RoleArn: !GetAtt CodePipelineRole.Arn
       ArtifactStore:
         Type: S3
@@ -147,7 +171,7 @@ Resources:
                 Version: '1'
               Configuration:
                 S3Bucket: !Ref ArtifactsBucket
-                S3ObjectKey: WorkshopsApp/template-config.zip
+                S3ObjectKey: WorkshopsBackendApp/template-config.zip
               OutputArtifacts:
                 - Name: TemplateConfig
               RunOrder: 1
@@ -163,7 +187,7 @@ Resources:
                 Version: '1'
                 Provider: CodeBuild
               Configuration:
-                ProjectName: BuildWorkshopsApp
+                ProjectName: BuildWorkshopsBackendApp
               OutputArtifacts:
                 - Name: TemplateOutput
         - Name: Test
@@ -178,7 +202,7 @@ Resources:
                 Version: '1'
                 Provider: CodeBuild
               Configuration:
-                ProjectName: TestWorkshopsApp
+                ProjectName: TestWorkshopsBackendApp
               OutputArtifacts:
                 - Name: TestResult
         - Name: Deploy
@@ -212,3 +236,45 @@ Resources:
                 StackName: loan-offerer
                 ChangeSetName: CodePipelineChangeSet
               RunOrder: 2
+  FrontendCodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: WorkshopsFrontendApp
+      RoleArn: !GetAtt CodePipelineRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref ArtifactsBucket
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceCode
+              Region: eu-central-1
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Version: '1'
+                Provider: GitHub
+              Configuration:
+                Owner: wojciech-dabrowski
+                Repo: ci-cd-cloud-workshops
+                Branch: front-cp
+                OAuthToken: your-token
+                PollForSourceChanges: false
+              OutputArtifacts:
+                - Name: SourceCode
+        - Name: Build
+          Actions:
+            - Name: BuildApp
+              Region: eu-central-1
+              InputArtifacts:
+                - Name: SourceCode
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: '1'
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: BuildWorkshopsFrontendApp
+              OutputArtifacts:
+                - Name: CodePackage
+
