@@ -1,6 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Cope Pipeline for workshops app
+Parameters:
+  GithubToken:
+    Type: String
 Resources:
   CodePipelineRole:
     Type: AWS::IAM::Role
@@ -157,7 +160,7 @@ Resources:
                 Owner: wojciech-dabrowski
                 Repo: ci-cd-cloud-workshops
                 Branch: master
-                OAuthToken: your-token
+                OAuthToken: !Ref GithubToken
                 PollForSourceChanges: false
               OutputArtifacts:
                 - Name: SourceCode
@@ -257,17 +260,32 @@ Resources:
               Configuration:
                 Owner: wojciech-dabrowski
                 Repo: ci-cd-cloud-workshops
-                Branch: front-cp
-                OAuthToken: your-token
+                Branch: master
+                OAuthToken: !Ref GithubToken
                 PollForSourceChanges: false
               OutputArtifacts:
                 - Name: SourceCode
+              RunOrder: 1
+            - Name: TemplateConfig
+              Region: eu-central-1
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: S3
+                Version: '1'
+              Configuration:
+                S3Bucket: !Ref ArtifactsBucket
+                S3ObjectKey: WorkshopsFrontendApp/app-config.zip
+              OutputArtifacts:
+                - Name: TemplateConfig
+              RunOrder: 1
         - Name: Build
           Actions:
             - Name: BuildApp
               Region: eu-central-1
               InputArtifacts:
                 - Name: SourceCode
+                - Name: TemplateConfig
               ActionTypeId:
                 Category: Build
                 Owner: AWS
@@ -275,6 +293,7 @@ Resources:
                 Provider: CodeBuild
               Configuration:
                 ProjectName: BuildWorkshopsFrontendApp
+                PrimarySource: SourceCode
               OutputArtifacts:
                 - Name: CodePackage
 
