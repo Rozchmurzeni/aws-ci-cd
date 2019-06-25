@@ -6,6 +6,10 @@ Parameters:
     Type: String
     MinLength: 30
     MaxLength: 128
+  ExternalApiUrl:
+    Type: String
+  ExternalApiKey:
+    Type: String
 Resources:
   ApiGatewayRestApi:
     Type: 'AWS::ApiGateway::RestApi'
@@ -246,8 +250,8 @@ Resources:
       Tracing: Active
       Environment:
         Variables:
-          ApiBaseUrl: 'ApiBaseUrl'
-          ApiKey: 'ApiKey'
+          ApiBaseUrl: !Ref ExternalApiUrl
+          ApiKey: !Ref ExternalApiKey
   RequestLoanLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
