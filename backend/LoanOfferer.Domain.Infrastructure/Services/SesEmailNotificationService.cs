@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.SimpleEmail;
@@ -13,9 +15,10 @@ namespace LoanOfferer.Domain.Infrastructure.Services
     public class SesEmailNotificationService : IEmailNotificationService
     {
         private readonly IAmazonSimpleEmailService _amazonSimpleEmailService;
-        private const string LoanRequestedEmailSubject = "Congratulations!";
-        private const string MessageTemplate = "{0}";
+        private const string LoanRequestedEmailSubject = "Thank you!";
         private const string SourceEmail = "ci.cd.workshops@gmail.com";
+        private const string MessageBodyHtmlResourceName = "LoanOfferer.Domain.Infrastructure.Resources.loan-offerer-email-template.html";
+        private const string LoanAmountHtmlPlaceholder = "{{LoanAmount}}";
 
         public SesEmailNotificationService()
         {
@@ -41,8 +44,29 @@ namespace LoanOfferer.Domain.Infrastructure.Services
                 Message = new Message
                 {
                     Subject = new Content { Data = LoanRequestedEmailSubject },
-                    Body = new Body { Html = new Content { Data = String.Format(MessageTemplate, requestedLoanAmount.Value) } }
+                    Body = new Body
+                    {
+                        Html = new Content
+                        {
+                            Data = GetEmailBody()
+                               .Replace(
+                                    LoanAmountHtmlPlaceholder,
+                                    requestedLoanAmount.Value.ToString()
+                                )
+                        }
+                    }
                 }
             };
+
+        private static string GetEmailBody()
+        {
+            var assembly = typeof(SesEmailNotificationService).GetTypeInfo().Assembly;
+            var htmlStream = assembly.GetManifestResourceStream(MessageBodyHtmlResourceName);
+
+            using (var streamReader = new StreamReader(htmlStream))
+            {
+                return streamReader.ReadToEnd();
+            }
+        }
     }
 }
