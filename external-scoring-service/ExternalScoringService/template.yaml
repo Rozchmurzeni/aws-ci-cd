@@ -55,7 +55,7 @@ Resources:
   ApiKey:
     Type: 'AWS::ApiGateway::ApiKey'
     Properties:
-      Name: RestApiKey
+      Name: ScoringServiceApiKey
       Description: External scoring service REST API Key
       Enabled: 'true'
       GenerateDistinctId: false

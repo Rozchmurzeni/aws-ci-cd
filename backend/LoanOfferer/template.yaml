@@ -122,7 +122,7 @@ Resources:
   ApiKey:
     Type: 'AWS::ApiGateway::ApiKey'
     Properties:
-      Name: LoanOffererApiKeyv2
+      Name: LoanOffererApiKey
       Description: Loan offerer REST API Key
       Enabled: 'true'
       GenerateDistinctId: false
