@@ -161,7 +161,7 @@ Resources:
                 Repo: ci-cd-cloud-workshops
                 Branch: master
                 OAuthToken: !Ref GithubToken
-                PollForSourceChanges: false
+                PollForSourceChanges: true
               OutputArtifacts:
                 - Name: SourceCode
               RunOrder: 1
@@ -262,7 +262,7 @@ Resources:
                 Repo: ci-cd-cloud-workshops
                 Branch: master
                 OAuthToken: !Ref GithubToken
-                PollForSourceChanges: false
+                PollForSourceChanges: true
               OutputArtifacts:
                 - Name: SourceCode
               RunOrder: 1
