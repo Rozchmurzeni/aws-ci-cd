@@ -131,9 +131,11 @@ Resources:
         Image: aws/codebuild/standard:2.0
         EnvironmentVariables:
           - Name: PackageBucket
-            Value: cloud-workshops-web-app
+            Value: cloud-workshops-static-website
           - Name: CloudfrontId
-            Value: EL4TKV8EQ0UC0
+            Value: 
+              Fn::ImportValue: 
+                cloud-workshops-static-website-CloudfrontId
       Source:
         Type: CODEPIPELINE
         BuildSpec: frontend/loan-offerer/buildspec.yaml
@@ -279,6 +281,24 @@ Resources:
               OutputArtifacts:
                 - Name: TemplateConfig
               RunOrder: 1
+        - Name: DeployTemplate
+          Actions:
+            - Name: DeployTemplate
+              Region: eu-central-1
+              InputArtifacts:
+                - Name: SourceCode
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_IAM
+                RoleArn: !GetAtt CodePipelineRole.Arn
+                StackName: cloud-workshops-static-website
+                TemplatePath: SourceCode::frontend/static-website.yaml
+                ParameterOverrides: '{"BucketName": "cloud-workshops-static-website"}'
         - Name: Build
           Actions:
             - Name: BuildApp
@@ -296,4 +316,3 @@ Resources:
                 PrimarySource: SourceCode
               OutputArtifacts:
                 - Name: CodePackage
-

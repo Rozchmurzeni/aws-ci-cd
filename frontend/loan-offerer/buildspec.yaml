@@ -7,7 +7,7 @@ phases:
     commands:
       - cd frontend/loan-offerer
       - npm install
-      - npm install -g @angular/cli
+      - npm install @angular/cli
   build:
     commands:
       - ng build --outputHashing=all
