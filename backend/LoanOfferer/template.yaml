@@ -10,6 +10,8 @@ Parameters:
     Type: String
   ExternalApiKey:
     Type: String
+  FrontendApplicationUrl:
+    Type: String
 Resources:
   ApiGatewayRestApi:
     Type: 'AWS::ApiGateway::RestApi'
@@ -252,6 +254,7 @@ Resources:
         Variables:
           ApiBaseUrl: !Ref ExternalApiUrl
           ApiKey: !Ref ExternalApiKey
+          FrontendApplicationUrl: !Ref FrontendApplicationUrl
   RequestLoanLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
