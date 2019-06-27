@@ -35,6 +35,9 @@ Resources:
                 Action: "apigateway:*"
                 Resource: "*"
               - Effect: Allow
+                Action: "cloudfront:*"
+                Resource: "*"
+              - Effect: Allow
                 Action: "lambda:*"
                 Resource: "*"
               - Effect: Allow
@@ -133,9 +136,8 @@ Resources:
           - Name: PackageBucket
             Value: cloud-workshops-static-website
           - Name: CloudfrontId
-            Value: 
-              Fn::ImportValue: 
-                cloud-workshops-static-website-CloudfrontId
+            Value:
+              !ImportValue cloud-workshops-static-website-CloudfrontId
       Source:
         Type: CODEPIPELINE
         BuildSpec: frontend/loan-offerer/buildspec.yaml
