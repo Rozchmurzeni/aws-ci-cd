@@ -4,9 +4,9 @@
   "configuration" : "Release",
   "framework"     : "netcoreapp2.1",
   "template"      : "template.yaml",
-  "s3-bucket"     : "<Your_deploy_code_bucket>",
-  "s3-prefix"     : "<Your_deploy_code_location_in_bucket>",
-  "template-parameters" : "\"InputApiKeyValue\"=\"GdATdPRUrLIrkVTEYKvaUdblIpsdAgWwzfIwEpAy\"",
+  "s3-bucket"     : "<YOUR_BUCKET>",
+  "s3-prefix"     : "<YOUR_PREFIX>",
+  "template-parameters" : "\"InputApiKeyValue\"=\"<YOUR_API_KEY>\";\"ExternalApiUrl\"=\"<EXTERNAL_API_URL>\";\"ExternalApiKey\"=\"<EXTERNAL_API_KEY>\";\"FrontendApplicationUrl\"=\"<FE_API_URL>\"",
   "stack-name"          : "loan-offerer",
   "stack-wait"          : true
 }
