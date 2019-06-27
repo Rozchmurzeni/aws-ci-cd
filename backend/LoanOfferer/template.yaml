@@ -254,7 +254,6 @@ Resources:
         Variables:
           ApiBaseUrl: !Ref ExternalApiUrl
           ApiKey: !Ref ExternalApiKey
-          FrontendApplicationUrl: !Ref FrontendApplicationUrl
   RequestLoanLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -266,6 +265,9 @@ Resources:
       Role: !GetAtt RequestLoanLambdaIamRole.Arn
       Timeout: 180
       Tracing: Active
+      Environment:
+        Variables:
+          FrontendApplicationUrl: !Ref FrontendApplicationUrl
   CreateOfferLambdaIamRole:
     Type: AWS::IAM::Role
     Properties:
