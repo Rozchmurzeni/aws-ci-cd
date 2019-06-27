@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using Amazon;
@@ -13,29 +12,29 @@ namespace LoanOfferer.Domain.Infrastructure.Services
 {
     public class SesEmailNotificationService : IEmailNotificationService
     {
+        private readonly IEmailNotificationServiceConfig _config;
         private readonly IAmazonSimpleEmailService _amazonSimpleEmailService;
+
         private const string LoanRequestedEmailSubject = "Thank you!";
         private const string SourceEmail = "ci.cd.workshops@gmail.com";
         private const string MessageBodyHtmlResourceName = "LoanOfferer.Domain.Infrastructure.Resources.loan-offerer-email-template.html";
-        private const string LoanAmountHtmlPlaceholder = "{{LoanAmount}}";
 
-        public SesEmailNotificationService()
+        private const string LoanAmountHtmlPlaceholder = "{{LoanAmount}}";
+        private const string FrontendApplicationUrlHtmlPlaceholder = "{{FrontendApplicationUrl}}";
+
+        public SesEmailNotificationService(IEmailNotificationServiceConfig config)
         {
+            _config = config;
             _amazonSimpleEmailService = new AmazonSimpleEmailServiceClient(RegionEndpoint.EUWest1);
         }
 
         public async Task SendLoanRequestedMessage(EmailAddress emailAddress, LoanAmount requestedLoanAmount)
         {
             var request = CreateSendEmailRequest(emailAddress, requestedLoanAmount);
-            var response = await _amazonSimpleEmailService.SendEmailAsync(request);
-
-            if (response.HttpStatusCode != HttpStatusCode.OK)
-            {
-                // TODO: Log information about failure
-            }
+            await _amazonSimpleEmailService.SendEmailAsync(request);
         }
 
-        private static SendEmailRequest CreateSendEmailRequest(EmailAddress emailAddress, LoanAmount requestedLoanAmount)
+        private SendEmailRequest CreateSendEmailRequest(EmailAddress emailAddress, LoanAmount requestedLoanAmount)
             => new SendEmailRequest
             {
                 Source = SourceEmail,
@@ -48,10 +47,14 @@ namespace LoanOfferer.Domain.Infrastructure.Services
                         Html = new Content
                         {
                             Data = GetEmailBody()
-                               .Replace(
-                                    LoanAmountHtmlPlaceholder,
-                                    requestedLoanAmount.Value.ToString()
-                                )
+                                  .Replace(
+                                       LoanAmountHtmlPlaceholder,
+                                       requestedLoanAmount.Value.ToString()
+                                   )
+                                  .Replace(
+                                       FrontendApplicationUrlHtmlPlaceholder,
+                                       _config.FrontendApplicationUrl
+                                   )
                         }
                     }
                 }

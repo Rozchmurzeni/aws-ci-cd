@@ -22,7 +22,8 @@ namespace LoanOfferer.Functions
         {
             var loanOfferFactory = new LoanOfferFactory();
             var loanOfferRepository = new LoanOfferDynamoDbRepository(loanOfferFactory);
-            var emailService = new SesEmailNotificationService();
+            var emailConfig = new EnvironmentVariablesEmailServiceConfig();
+            var emailService = new SesEmailNotificationService(emailConfig);
             var service = new RequestLoanService(loanOfferRepository, emailService);
 
             return service;
