@@ -1,0 +1,1 @@
+npm install && ng build --outputHashing=all && aws s3 rm s3://cloud-workshops-static-website --recursive && aws s3 cp --recursive ./dist/loan-offerer/ s3://cloud-workshops-static-website/
