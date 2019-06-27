@@ -54,3 +54,9 @@ Resources:
               Forward: none
           ViewerProtocolPolicy: redirect-to-https
         PriceClass: PriceClass_All
+Outputs:
+ CloudfrontId:
+   Description: The ID of the Cloudfront
+   Value: !Ref WebsiteCloudfront
+   Export:
+     Name: !Sub "${AWS::StackName}-CloudfrontId"

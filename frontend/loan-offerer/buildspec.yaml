@@ -8,7 +8,7 @@ phases:
       - cd frontend/loan-offerer
       - cp $CODEBUILD_SRC_DIR_TemplateConfig/environment.ts ./src/environments/
       - npm install
-      - npm install -g @angular/cli
+      - npm install @angular/cli
   build:
     commands:
       - ng build --outputHashing=all
