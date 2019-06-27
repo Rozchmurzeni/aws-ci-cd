@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Cope Pipeline for workshops app
+Parameters:
+  GithubToken:
+    Type: String
+Resources:
+  CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+                - cloudformation.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CodePipelinePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: "cloudformation:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "codebuild:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "s3:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "apigateway:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "cloudfront:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "lambda:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "dynamodb:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "iam:*"
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource: "*"
+  ArtifactsBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: workshops-app-cp-artifacts
+      VersioningConfiguration:
+        Status: Enabled
+  BackendCodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: WorkshopsBackendApp
+      RoleArn: !GetAtt CodePipelineRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref ArtifactsBucket
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceCode
+              Region: eu-central-1
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Version: '1'
+                Provider: GitHub
+              Configuration:
+                Owner: wojciech-dabrowski
+                Repo: ci-cd-cloud-workshops
+                Branch: master
+                OAuthToken: !Ref GithubToken
+                PollForSourceChanges: true
+              OutputArtifacts:
+                - Name: SourceCode

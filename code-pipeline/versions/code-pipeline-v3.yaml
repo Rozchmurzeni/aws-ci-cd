@@ -1,0 +1,148 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Cope Pipeline for workshops app
+Parameters:
+  GithubToken:
+    Type: String
+Resources:
+  CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+                - cloudformation.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CodePipelinePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: "cloudformation:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "codebuild:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "s3:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "apigateway:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "cloudfront:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "lambda:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "dynamodb:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "iam:*"
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource: "*"
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: 
+              - codebuild.amazonaws.com
+              - codepipeline.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CodeBuildPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: "s3:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "cloudfront:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "logs:*"
+                Resource: "*"
+  ArtifactsBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: workshops-app-cp-artifacts
+      VersioningConfiguration:
+        Status: Enabled
+  BuildBackendProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: BuildWorkshopsBackendApp
+      Description: Build workshops backend app
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:2.0
+        EnvironmentVariables:
+          - Name: PackageBucket
+            Value: !Ref ArtifactsBucket
+          - Name: PackageBucketKey
+            Value: WorkshopsBackendApp/CodePackage
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: backend/buildspec.yaml
+      TimeoutInMinutes: 10
+  BackendCodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: WorkshopsBackendApp
+      RoleArn: !GetAtt CodePipelineRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref ArtifactsBucket
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceCode
+              Region: eu-central-1
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Version: '1'
+                Provider: GitHub
+              Configuration:
+                Owner: wojciech-dabrowski
+                Repo: ci-cd-cloud-workshops
+                Branch: master
+                OAuthToken: !Ref GithubToken
+                PollForSourceChanges: true
+              OutputArtifacts:
+                - Name: SourceCode
+              RunOrder: 1
+        - Name: Build
+          Actions:
+            - Name: BuildApp
+              Region: eu-central-1
+              InputArtifacts:
+                - Name: SourceCode
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: '1'
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: BuildWorkshopsBackendApp
+              OutputArtifacts:
+                - Name: TemplateOutput
