@@ -15,7 +15,6 @@ Resources:
             Principal:
               Service:
                 - codepipeline.amazonaws.com
-                - cloudformation.amazonaws.com
             Action: sts:AssumeRole
       Policies:
         - PolicyName: CodePipelinePolicy
@@ -60,7 +59,6 @@ Resources:
           Principal:
             Service: 
               - codebuild.amazonaws.com
-              - codepipeline.amazonaws.com
           Action: sts:AssumeRole
       Policies:
         - PolicyName: CodeBuildPolicy
