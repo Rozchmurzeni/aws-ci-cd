@@ -76,6 +76,7 @@
           Principal:
             Service: 
               - codebuild.amazonaws.com
+              - codepipeline.amazonaws.com
           Action: sts:AssumeRole
       Policies:
         - PolicyName: CodeBuildPolicy
