@@ -4,7 +4,7 @@ using LoanOfferer.Domain.ValueObjects;
 
 namespace LoanOfferer.Domain.Entities
 {
-    public class LoanOffer
+    public class LoanOffer : ILoanOffer
     {
         private LoanAmount _maxLoanAmount;
         private LoanAmount _requestedLoanAmount;
@@ -42,6 +42,16 @@ namespace LoanOfferer.Domain.Entities
             var score = scoringService.GetScore(PeselNumber);
             MaxLoanAmount = CalculateAmount(score);
         }
+        
+        public void SetRequestedLoanAmount(LoanAmount requestedLoanAmount)
+        {
+            if (requestedLoanAmount > MaxLoanAmount)
+            {
+                throw new RequestedLoanAmountIsGreaterThanMaxLoanAmountException(Id);
+            }
+
+            RequestedLoanAmount = requestedLoanAmount;
+        }
 
         private static LoanAmount CalculateAmount(Score score)
         {
@@ -58,16 +68,6 @@ namespace LoanOfferer.Domain.Entities
             return score.Value >= 50
                        ? new LoanAmount(2000)
                        : new LoanAmount(1000);
-        }
-
-        public void SetRequestedLoanAmount(LoanAmount requestedLoanAmount)
-        {
-            if (requestedLoanAmount > MaxLoanAmount)
-            {
-                throw new RequestedLoanAmountIsGreaterThanMaxLoanAmountException(Id);
-            }
-
-            RequestedLoanAmount = requestedLoanAmount;
         }
     }
 }

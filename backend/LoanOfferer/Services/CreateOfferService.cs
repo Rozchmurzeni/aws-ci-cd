@@ -19,7 +19,7 @@ namespace LoanOfferer.Services
             _scoringService = scoringService;
         }
 
-        public async Task<LoanOffer> CreateOfferAsync(string peselNumber, string emailAddress)
+        public async Task<ILoanOffer> CreateOfferAsync(string peselNumber, string emailAddress)
         {
             var loanOffer = _loanOfferFactory.Create(peselNumber, emailAddress);
             loanOffer.CalculateOffer(_scoringService);

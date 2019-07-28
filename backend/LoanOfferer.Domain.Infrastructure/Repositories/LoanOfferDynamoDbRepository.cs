@@ -32,7 +32,7 @@ namespace LoanOfferer.Domain.Infrastructure.Repositories
             _dynamoDbClient = new AmazonDynamoDBClient();
         }
 
-        public async Task AddAsync(LoanOffer loanOffer)
+        public async Task AddAsync(ILoanOffer loanOffer)
         {
             var request = CreatePutLoanOfferRequest(loanOffer);
             var response = await _dynamoDbClient.PutItemAsync(request);
@@ -43,7 +43,7 @@ namespace LoanOfferer.Domain.Infrastructure.Repositories
             }
         }
 
-        public async Task<LoanOffer> GetAsync(EntityIdentity offerId)
+        public async Task<ILoanOffer> GetAsync(EntityIdentity offerId)
         {
             var request = CreateGetLoanOfferRequest(offerId);
             var response = await _dynamoDbClient.GetItemAsync(request);
@@ -62,7 +62,7 @@ namespace LoanOfferer.Domain.Infrastructure.Repositories
             );
         }
 
-        public async Task UpdateAsync(LoanOffer loanOffer)
+        public async Task UpdateAsync(ILoanOffer loanOffer)
         {
             var request = CreateUpdateItemRequest(loanOffer);
             var response = await _dynamoDbClient.UpdateItemAsync(request);
@@ -73,7 +73,7 @@ namespace LoanOfferer.Domain.Infrastructure.Repositories
             }
         }
 
-        private static UpdateItemRequest CreateUpdateItemRequest(LoanOffer loanOffer)
+        private static UpdateItemRequest CreateUpdateItemRequest(ILoanOffer loanOffer)
             => new UpdateItemRequest
             {
                 TableName = LoanOfferTableName,
@@ -98,7 +98,7 @@ namespace LoanOfferer.Domain.Infrastructure.Repositories
                 }
             };
 
-        private static PutItemRequest CreatePutLoanOfferRequest(LoanOffer loanOffer)
+        private static PutItemRequest CreatePutLoanOfferRequest(ILoanOffer loanOffer)
             => new PutItemRequest
             {
                 TableName = LoanOfferTableName,
@@ -107,7 +107,7 @@ namespace LoanOfferer.Domain.Infrastructure.Repositories
                     { IdDynamoFieldName, new AttributeValue { S = loanOffer.Id.ToString() } },
                     { PeselNumberDynamoFieldName, new AttributeValue { S = loanOffer.PeselNumber.Value } },
                     { EmailAddressDynamoFieldName, new AttributeValue { S = loanOffer.EmailAddress.Value } },
-                    { MaxLoanAmountDynamoFieldName, new AttributeValue { N = loanOffer.MaxLoanAmount.ToString() } },
+                    { MaxLoanAmountDynamoFieldName, new AttributeValue { N = loanOffer.MaxLoanAmount.ToString() } }
                 }
             };
     }
