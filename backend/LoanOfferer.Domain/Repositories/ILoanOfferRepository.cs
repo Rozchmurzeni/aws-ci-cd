@@ -6,8 +6,8 @@ namespace LoanOfferer.Domain.Repositories
 {
     public interface ILoanOfferRepository
     {
-        Task AddAsync(LoanOffer loanOffer);
-        Task<LoanOffer> GetAsync(EntityIdentity offerId);
-        Task UpdateAsync(LoanOffer loanOffer);
+        Task AddAsync(ILoanOffer loanOffer);
+        Task<ILoanOffer> GetAsync(EntityIdentity offerId);
+        Task UpdateAsync(ILoanOffer loanOffer);
     }
 }
