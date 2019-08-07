@@ -142,6 +142,22 @@ Resources:
         Type: CODEPIPELINE
         BuildSpec: frontend/loan-offerer/buildspec.yaml
       TimeoutInMinutes: 10
+  TestFrontendProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: TestWorkshopsFrontendApp
+      Description: Test workshops frontend app
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:2.0
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: frontend/loan-offerer/testspec.yaml
+      TimeoutInMinutes: 10
   BackendCodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -318,3 +334,16 @@ Resources:
                 PrimarySource: SourceCode
               OutputArtifacts:
                 - Name: CodePackage
+        - Name: Test
+          Actions:
+            - Name: TestApp
+              Region: eu-central-1
+              InputArtifacts:
+                - Name: SourceCode
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: '1'
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: TestWorkshopsFrontendApp
