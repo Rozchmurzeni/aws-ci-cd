@@ -1,14 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Creates an S3 bucket configured for hosting a static website
-Parameters:
-  BucketName:
-    Type: String
-    Description: Bucket name for website
 Resources:
   WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref BucketName
       AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
@@ -60,3 +55,8 @@ Outputs:
    Value: !Ref WebsiteCloudfront
    Export:
      Name: !Sub "${AWS::StackName}-CloudfrontId"
+ WebsiteBucketId:
+   Description: The ID of the WebsiteBucket
+   Value: !Ref WebsiteBucket
+   Export:
+     Name: !Sub "${AWS::StackName}-WebsiteBucketId"
