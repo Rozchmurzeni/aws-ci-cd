@@ -317,7 +317,6 @@ Resources:
                 RoleArn: !GetAtt CodePipelineRole.Arn
                 StackName: cloud-workshops-static-website
                 TemplatePath: SourceCode::frontend/static-website.yaml
-                ParameterOverrides: '{"BucketName": "cloud-workshops-static-website"}'
         - Name: Build
           Actions:
             - Name: BuildApp
