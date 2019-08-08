@@ -1,0 +1,12 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 10
+    commands:
+      - cd frontend/loan-offerer
+      - npm install
+  build:
+    commands:
+      - npm run test-headless
