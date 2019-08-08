@@ -1,1 +1,1 @@
-aws cloudformation deploy --template-file static-website.yaml --stack-name cloud-workshops-static-website --capabilities CAPABILITY_IAM --region eu-central-1 --parameter-overrides BucketName=cloud-workshops-static-website
+aws cloudformation deploy --template-file static-website.yaml --stack-name cloud-workshops-static-website --capabilities CAPABILITY_IAM --region eu-central-1
