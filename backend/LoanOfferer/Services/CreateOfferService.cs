@@ -22,7 +22,8 @@ namespace LoanOfferer.Services
         public async Task<ILoanOffer> CreateOfferAsync(string peselNumber, string emailAddress)
         {
             var loanOffer = _loanOfferFactory.Create(peselNumber, emailAddress);
-            loanOffer.CalculateOffer(_scoringService);
+            var scoring = await _scoringService.GetScoreAsync(loanOffer.PeselNumber);
+            loanOffer.CalculateOffer(scoring);
             await _loanOfferRepository.AddAsync(loanOffer);
             return loanOffer;
         }

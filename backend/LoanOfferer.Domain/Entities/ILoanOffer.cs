@@ -10,7 +10,7 @@ namespace LoanOfferer.Domain.Entities
         EmailAddress EmailAddress { get; }
         LoanAmount MaxLoanAmount { get; }
         LoanAmount RequestedLoanAmount { get; }
-        void CalculateOffer(IScoringService scoringService);
+        void CalculateOffer(Score score);
         void SetRequestedLoanAmount(LoanAmount requestedLoanAmount);
     }
 }
