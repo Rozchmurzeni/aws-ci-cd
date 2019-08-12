@@ -5,6 +5,6 @@ namespace LoanOfferer.Domain.Services
 {
     public interface IScoringService
     {
-        Task<Score> GetScore(PeselNumber peselNumber);
+        Task<Score> GetScoreAsync(PeselNumber peselNumber);
     }
 }

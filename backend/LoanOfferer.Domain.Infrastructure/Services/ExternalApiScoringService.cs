@@ -17,7 +17,7 @@ namespace LoanOfferer.Domain.Infrastructure.Services
             _serviceConfig = serviceConfig;
         }
 
-        public async Task<Score> GetScore(PeselNumber peselNumber)
+        public async Task<Score> GetScoreAsync(PeselNumber peselNumber)
         {
             var restClient = new RestClient(_serviceConfig.ApiBaseUrl);
             var request = new RestRequest("scoring", Method.GET);
