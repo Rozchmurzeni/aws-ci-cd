@@ -78,7 +78,7 @@ namespace LoanOfferer.Test.Services
             await service.CreateOfferAsync(peselNumber, emailAddress);
 
             // Then
-            scoringServiceMock.Verify(mock => mock.GetScore(loanOfferMock.Object.PeselNumber), Times.Once);
+            scoringServiceMock.Verify(mock => mock.GetScoreAsync(loanOfferMock.Object.PeselNumber), Times.Once);
         }
 
         private static Mock<ILoanOfferFactory> CreateConfiguredLoanOfferFactoryMock(
