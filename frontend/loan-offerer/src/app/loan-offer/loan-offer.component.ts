@@ -21,6 +21,7 @@ export class LoanOfferComponent implements OnInit {
   isGettingOffer: boolean;
   isSendingLoanApplication: boolean;
   applicationSent: boolean;
+  failedServiceCall: boolean;
 
   initialOffer: InitialOfferReadModel;
 
@@ -50,11 +51,14 @@ export class LoanOfferComponent implements OnInit {
     };
 
     this.isGettingOffer = true;
-    this.loanOfferService.getLoanOffer(model).subscribe(result => {
-      this.isGettingOffer = false;
-      this.initialOffer = result;
-      this.loanAmount = this.initialOffer.MaxLoanAmount;
-    });
+    this.loanOfferService.getLoanOffer(model).subscribe(
+      result => {
+        this.isGettingOffer = false;
+        this.initialOffer = result;
+        this.loanAmount = this.initialOffer.MaxLoanAmount;
+      },
+      () => (this.failedServiceCall = true)
+    );
   }
 
   sendLoanApplication(): void {
@@ -63,9 +67,12 @@ export class LoanOfferComponent implements OnInit {
       RequestedAmount: this.loanAmount
     };
     this.isSendingLoanApplication = true;
-    this.loanOfferService.sendLoanApplication(model).subscribe(() => {
-      this.isSendingLoanApplication = false;
-      this.applicationSent = true;
-    });
+    this.loanOfferService.sendLoanApplication(model).subscribe(
+      () => {
+        this.isSendingLoanApplication = false;
+        this.applicationSent = true;
+      },
+      () => (this.failedServiceCall = true)
+    );
   }
 }
