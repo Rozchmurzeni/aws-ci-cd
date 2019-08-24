@@ -15,7 +15,7 @@ namespace LoanOfferer.Domain.Test.Entities
         [InlineData(50, 2000)]
         [InlineData(51, 2000)]
         [InlineData(69, 2000)]
-        [InlineData(70, 3000)]
+        [InlineData(70, 3500)]
         [InlineData(71, 3500)]
         [InlineData(89, 3500)]
         [InlineData(90, 5000)]
