@@ -6,6 +6,5 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Delete
     Properties:
-      BucketName: workshops-app-cp-artifacts
       VersioningConfiguration:
         Status: Enabled
