@@ -60,7 +60,7 @@ namespace LoanOfferer.Test.Services
             await service.RequestLoan(offerEntityIdentity.ToString(), requestedLoanAmount.Value);
 
             // Then
-            repositoryMock.Verify(m => m.UpdateAsync(loanOffer.Object), Times.Once);
+            repositoryMock.Verify(m => m.UpdateAsync(loanOffer.Object), Times.Never);
         }
 
         [Fact]
