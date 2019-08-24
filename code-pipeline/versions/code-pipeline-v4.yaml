@@ -18,7 +18,7 @@
                 Provider: GitHub
               Configuration:
                 Owner: wojciech-dabrowski
-                Repo: ci-cd-cloud-workshops
+                Repo: aws-ci-cd
                 Branch: master
                 OAuthToken: !Ref GithubToken
                 PollForSourceChanges: true
