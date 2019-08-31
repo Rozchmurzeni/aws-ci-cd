@@ -21,7 +21,7 @@ export class DomainValidators {
 
     checkSum = checkSum % 10;
 
-    let isValid = 10 - checkSum === controlNumber
+    let isValid = (checkSum ? 10 - checkSum : checkSum) === controlNumber
 
     return isValid ? null : {
       pesel: {
