@@ -39,7 +39,6 @@ namespace LoanOfferer.Domain.Entities
         public void CalculateOffer(Score score)
         {
             var maxLoanAmountValue = 1000;
-            
 
             if (score.Value >= 90)
             {
