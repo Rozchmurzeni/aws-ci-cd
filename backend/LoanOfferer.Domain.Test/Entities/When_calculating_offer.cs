@@ -1,8 +1,6 @@
-using FluentAssertions.Common;
-using LoanOfferer.Domain.Services;
+using FluentAssertions;
 using LoanOfferer.Domain.Test.TestHelpers;
 using LoanOfferer.Domain.ValueObjects;
-using Moq;
 using Xunit;
 
 namespace LoanOfferer.Domain.Test.Entities
@@ -32,7 +30,7 @@ namespace LoanOfferer.Domain.Test.Entities
             loanOffer.CalculateOffer(score);
 
             // Then
-            loanOffer.MaxLoanAmount.Value.IsSameOrEqualTo(expectedMaxLoanAmountValue.Value);
+            loanOffer.MaxLoanAmount.Value.Should().Be(expectedMaxLoanAmountValue.Value);
         }
     }
 }

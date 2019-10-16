@@ -1,6 +1,5 @@
 using System;
 using FluentAssertions;
-using FluentAssertions.Common;
 using LoanOfferer.Domain.Exceptions;
 using LoanOfferer.Domain.ValueObjects;
 using Xunit;
@@ -20,7 +19,7 @@ namespace LoanOfferer.Domain.Test.ValueObjects
 
             // Then
             loanAmount.Should().NotBeNull();
-            loanAmount.Value.Should().IsSameOrEqualTo(correctValue);
+            loanAmount.Value.Should().Be(correctValue);
         }
 
         [Theory]

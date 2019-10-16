@@ -1,6 +1,5 @@
 using System;
 using FluentAssertions;
-using FluentAssertions.Common;
 using LoanOfferer.Domain.ValueObjects;
 using Xunit;
 
@@ -19,7 +18,7 @@ namespace LoanOfferer.Domain.Test.ValueObjects
 
             // Then
             id.Should().NotBeNull();
-            id.Value.IsSameOrEqualTo(guid);
+            id.Value.Should().Be(guid);
         }
 
         [Fact]
@@ -33,7 +32,7 @@ namespace LoanOfferer.Domain.Test.ValueObjects
 
             // Then
             id.Should().NotBeNull();
-            id.Value.IsSameOrEqualTo(guid);
+            id.Value.Should().Be(guid);
         }
 
         [Fact]
