@@ -3,7 +3,7 @@ using LoanOfferer.Domain.Repositories;
 using LoanOfferer.Domain.Services;
 using LoanOfferer.Domain.ValueObjects;
 
-namespace LoanOfferer.Services
+namespace LoanOfferer.Lambda.Services
 {
     public class RequestLoanService
     {

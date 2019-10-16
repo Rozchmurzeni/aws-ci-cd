@@ -1,7 +1,7 @@
 using Amazon.Lambda.APIGatewayEvents;
 using Newtonsoft.Json;
 
-namespace LoanOfferer.Models.Requests
+namespace LoanOfferer.Lambda.Models.Requests
 {
     public class RequestLoanRequest : APIGatewayProxyRequest
     {

@@ -1,8 +1,6 @@
 using FluentAssertions.Common;
-using LoanOfferer.Domain.Services;
 using LoanOfferer.Domain.Test.TestHelpers;
 using LoanOfferer.Domain.ValueObjects;
-using Moq;
 using Xunit;
 
 namespace LoanOfferer.Domain.Test.Entities

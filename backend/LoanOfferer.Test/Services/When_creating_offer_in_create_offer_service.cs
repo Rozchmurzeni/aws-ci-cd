@@ -4,7 +4,7 @@ using LoanOfferer.Domain.Entities;
 using LoanOfferer.Domain.Factories;
 using LoanOfferer.Domain.Repositories;
 using LoanOfferer.Domain.Services;
-using LoanOfferer.Services;
+using LoanOfferer.Lambda.Services;
 using Moq;
 using Xunit;
 

@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanOfferer", "LoanOfferer\LoanOfferer.csproj", "{E34FA15F-633A-429C-9268-4A8153FE5B08}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanOfferer.Lambda", "LoanOfferer.Lambda\LoanOfferer.Lambda.csproj", "{E34FA15F-633A-429C-9268-4A8153FE5B08}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanOfferer.Domain", "LoanOfferer.Domain\LoanOfferer.Domain.csproj", "{6861367F-6A4E-45F5-8513-F8C83E542493}"
 EndProject

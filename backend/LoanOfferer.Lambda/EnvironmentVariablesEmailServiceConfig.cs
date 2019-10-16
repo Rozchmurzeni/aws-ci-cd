@@ -1,7 +1,7 @@
 using System;
 using LoanOfferer.Domain.Infrastructure.Services;
 
-namespace LoanOfferer
+namespace LoanOfferer.Lambda
 {
     public class EnvironmentVariablesEmailServiceConfig : IEmailNotificationServiceConfig
     {

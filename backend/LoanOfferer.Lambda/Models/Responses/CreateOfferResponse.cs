@@ -4,7 +4,7 @@ using System.Net;
 using Amazon.Lambda.APIGatewayEvents;
 using Newtonsoft.Json;
 
-namespace LoanOfferer.Models.Responses
+namespace LoanOfferer.Lambda.Models.Responses
 {
     public class CreateOfferResponse : APIGatewayProxyResponse
     {

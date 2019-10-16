@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\LoanOfferer\LoanOfferer.csproj" />
+      <ProjectReference Include="..\LoanOfferer.Lambda\LoanOfferer.Lambda.csproj" />
     </ItemGroup>
 
 </Project>

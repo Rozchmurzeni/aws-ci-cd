@@ -17,7 +17,7 @@ namespace LoanOfferer.Domain.Infrastructure.Services
 
         private const string LoanRequestedEmailSubject = "Thank you!";
         private const string SourceEmail = "ci.cd.workshops@gmail.com";
-        private const string MessageBodyHtmlResourceName = "LoanOfferer.Domain.Infrastructure.Resources.loan-offerer-email-template.html";
+        private const string MessageBodyHtmlResourceName = "LoanOfferer.Lambda.Domain.Infrastructure.Resources.loan-offerer-email-template.html";
 
         private const string LoanAmountHtmlPlaceholder = "{{LoanAmount}}";
         private const string FrontendApplicationUrlHtmlPlaceholder = "{{FrontendApplicationUrl}}";

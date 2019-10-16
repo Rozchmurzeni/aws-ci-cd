@@ -2,11 +2,11 @@ using System.Threading.Tasks;
 using LoanOfferer.Domain.Infrastructure.Factories;
 using LoanOfferer.Domain.Infrastructure.Repositories;
 using LoanOfferer.Domain.Infrastructure.Services;
-using LoanOfferer.Models.Requests;
-using LoanOfferer.Models.Responses;
-using LoanOfferer.Services;
+using LoanOfferer.Lambda.Models.Requests;
+using LoanOfferer.Lambda.Models.Responses;
+using LoanOfferer.Lambda.Services;
 
-namespace LoanOfferer.Functions
+namespace LoanOfferer.Lambda.Functions
 {
     public class RequestLoanFunction
     {

@@ -4,7 +4,7 @@ using LoanOfferer.Domain.Factories;
 using LoanOfferer.Domain.Repositories;
 using LoanOfferer.Domain.Services;
 
-namespace LoanOfferer.Services
+namespace LoanOfferer.Lambda.Services
 {
     public class CreateOfferService
     {

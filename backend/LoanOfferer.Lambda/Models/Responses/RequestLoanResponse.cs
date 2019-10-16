@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Net;
 using Amazon.Lambda.APIGatewayEvents;
 
-namespace LoanOfferer.Models.Responses
+namespace LoanOfferer.Lambda.Models.Responses
 {
     public class RequestLoanResponse : APIGatewayProxyResponse
     {
