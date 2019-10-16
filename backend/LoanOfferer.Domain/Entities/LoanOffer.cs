@@ -38,19 +38,22 @@ namespace LoanOfferer.Domain.Entities
 
         public void CalculateOffer(Score score)
         {
+            var maxLoanAmountValue = 1000;
+
             if (score.Value >= 90)
             {
-                MaxLoanAmount = new LoanAmount(5000);
+                maxLoanAmountValue = 5000;
             }
-
-            if (score.Value >= 70)
+            else if (score.Value >= 70)
             {
-                MaxLoanAmount = new LoanAmount(3500);
+                maxLoanAmountValue = 3500;
+            }
+            else if (score.Value >= 50)
+            {
+                maxLoanAmountValue = 2000;
             }
 
-            MaxLoanAmount = score.Value >= 50
-                                ? new LoanAmount(2000)
-                                : new LoanAmount(1000);
+            MaxLoanAmount = new LoanAmount(maxLoanAmountValue);
         }
 
         public void SetRequestedLoanAmount(LoanAmount requestedLoanAmount)

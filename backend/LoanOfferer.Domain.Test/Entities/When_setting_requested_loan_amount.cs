@@ -1,6 +1,5 @@
 using System;
 using FluentAssertions;
-using FluentAssertions.Common;
 using LoanOfferer.Domain.Exceptions;
 using LoanOfferer.Domain.Test.TestHelpers;
 using LoanOfferer.Domain.ValueObjects;
@@ -25,7 +24,7 @@ namespace LoanOfferer.Domain.Test.Entities
 
             // Then
             loanOffer.RequestedLoanAmount.Should().NotBeNull();
-            loanOffer.RequestedLoanAmount.Value.IsSameOrEqualTo(requestedLoanAmount.Value);
+            loanOffer.RequestedLoanAmount.Value.Should().Be(requestedLoanAmount.Value);
         }
 
         [Fact]
