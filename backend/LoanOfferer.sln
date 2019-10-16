@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanOfferer.Domain.Test", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanOfferer.Test", "LoanOfferer.Test\LoanOfferer.Test.csproj", "{EF672399-ACFA-49BC-A58E-2C286527A52A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanOfferer.WebApi", "LoanOfferer.WebApi\LoanOfferer.WebApi.csproj", "{9F8B323E-E0E1-4DDD-8362-57D72C9284FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{EF672399-ACFA-49BC-A58E-2C286527A52A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF672399-ACFA-49BC-A58E-2C286527A52A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF672399-ACFA-49BC-A58E-2C286527A52A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F8B323E-E0E1-4DDD-8362-57D72C9284FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F8B323E-E0E1-4DDD-8362-57D72C9284FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F8B323E-E0E1-4DDD-8362-57D72C9284FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F8B323E-E0E1-4DDD-8362-57D72C9284FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
