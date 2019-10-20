@@ -1,6 +1,5 @@
 using System;
 using FluentAssertions;
-using FluentAssertions.Common;
 using LoanOfferer.Domain.Exceptions;
 using LoanOfferer.Domain.ValueObjects;
 using Xunit;
@@ -20,7 +19,7 @@ namespace LoanOfferer.Domain.Test.ValueObjects
 
             // Then
             email.Should().NotBeNull();
-            email.Value.IsSameOrEqualTo(correctEmailAddress);
+            email.Value.Should().Be(correctEmailAddress);
         }
 
         [Theory]

@@ -1,4 +1,3 @@
-using LoanOfferer.Domain.Services;
 using LoanOfferer.Domain.ValueObjects;
 
 namespace LoanOfferer.Domain.Entities
