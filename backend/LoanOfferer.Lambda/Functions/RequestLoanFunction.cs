@@ -10,7 +10,7 @@ namespace LoanOfferer.Lambda.Functions
 {
     public class RequestLoanFunction
     {
-        public async Task<RequestLoanResponse> ExecuteAsync(RequestLoanRequest request)
+        public async Task<RequestLoanResponse> ExecuteAsync(RequestLoanAPIGatewayRequest request)
         {
             var service = CreateRequestLoanService();
             await service.RequestLoan(request.OfferId, request.RequestedAmount);

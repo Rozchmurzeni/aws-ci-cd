@@ -13,10 +13,10 @@ namespace LoanOfferer.Lambda.Functions
 {
     public class CreateOfferFunction
     {
-        public async Task<CreateOfferResponse> ExecuteAsync(CreateOfferRequest request)
+        public async Task<CreateOfferResponse> ExecuteAsync(CreateOfferAPIGatewayRequest apiGatewayRequest)
         {
             var service = CreateOfferService();
-            var loanOffer = await service.CreateOfferAsync(request.PeselNumber, request.EmailAddress);
+            var loanOffer = await service.CreateOfferAsync(apiGatewayRequest.PeselNumber, apiGatewayRequest.EmailAddress);
             return CreateOfferResponse.Success(loanOffer.Id.Value, loanOffer.MaxLoanAmount.Value);
         }
 
