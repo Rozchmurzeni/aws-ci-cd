@@ -8,9 +8,9 @@ namespace LoanOfferer.Domain.ValueObjects
         {
             if (value == Guid.Empty)
             {
-                throw new ArgumentException("Entity identity cannot be an empty GUID.");    
+                throw new ArgumentException("Entity identity cannot be an empty GUID.");
             }
-            
+
             Value = value;
         }
 
@@ -18,7 +18,7 @@ namespace LoanOfferer.Domain.ValueObjects
         {
             if (!Guid.TryParse(id, out var value))
             {
-                throw new ArgumentException("Argument is not correct GUID.");    
+                throw new ArgumentException("Argument is not correct GUID.");
             }
 
             Value = value;

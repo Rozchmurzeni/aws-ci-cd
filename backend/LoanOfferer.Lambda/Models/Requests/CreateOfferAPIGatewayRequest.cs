@@ -1,4 +1,5 @@
 using Amazon.Lambda.APIGatewayEvents;
+using LoanOfferer.Commands;
 using LoanOfferer.Contracts.Requests;
 using Newtonsoft.Json;
 
@@ -11,5 +12,7 @@ namespace LoanOfferer.Lambda.Models.Requests
 
         public string PeselNumber => RequestBody.PeselNumber;
         public string EmailAddress => RequestBody.EmailAddress;
+
+        public CreateOfferCommand ToCreateOfferCommand() => new CreateOfferCommand(PeselNumber, EmailAddress);
     }
 }

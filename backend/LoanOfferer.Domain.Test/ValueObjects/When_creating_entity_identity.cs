@@ -26,7 +26,7 @@ namespace LoanOfferer.Domain.Test.ValueObjects
         {
             // Given
             var guid = Guid.NewGuid();
-            
+
             // When
             var id = new EntityIdentity(guid.ToString());
 
@@ -49,7 +49,7 @@ namespace LoanOfferer.Domain.Test.ValueObjects
         }
 
         [Fact]
-        public void It_should_throw_exception_for_incorrect_guid_as_string() 
+        public void It_should_throw_exception_for_incorrect_guid_as_string()
         {
             // Given
             const string notGuidString = "DefinitelyNotGuid";
@@ -62,4 +62,3 @@ namespace LoanOfferer.Domain.Test.ValueObjects
         }
     }
 }
-

@@ -1,25 +1,26 @@
 using System.Threading.Tasks;
+using LoanOfferer.Commands;
 using LoanOfferer.Domain.Repositories;
 using LoanOfferer.Domain.Services;
 using LoanOfferer.Domain.ValueObjects;
 
-namespace LoanOfferer.Lambda.Services
+namespace LoanOfferer.CommandHandlers
 {
-    public class RequestLoanService
+    public class RequestLoanCommandHandler
     {
         private readonly ILoanOfferRepository _loanOfferRepository;
         private readonly IEmailNotificationService _emailNotificationService;
 
-        public RequestLoanService(ILoanOfferRepository loanOfferRepository, IEmailNotificationService emailNotificationService)
+        public RequestLoanCommandHandler(ILoanOfferRepository loanOfferRepository, IEmailNotificationService emailNotificationService)
         {
             _loanOfferRepository = loanOfferRepository;
             _emailNotificationService = emailNotificationService;
         }
 
-        public async Task RequestLoan(string offerId, int requestedAmount)
+        public async Task Handle(RequestLoanCommand command)
         {
-            var offerEntityIdentity = new EntityIdentity(offerId);
-            var requestedLoanAmount = new LoanAmount(requestedAmount);
+            var offerEntityIdentity = new EntityIdentity(command.OfferId);
+            var requestedLoanAmount = new LoanAmount(command.RequestedAmount);
 
             var loanOffer = await _loanOfferRepository.GetAsync(offerEntityIdentity);
             loanOffer.SetRequestedLoanAmount(requestedLoanAmount);

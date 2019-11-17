@@ -12,8 +12,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\LoanOfferer.Contracts\LoanOfferer.Contracts.csproj" />
-      <ProjectReference Include="..\LoanOfferer.Domain.Infrastructure\LoanOfferer.Domain.Infrastructure.csproj" />
       <ProjectReference Include="..\LoanOfferer.Domain\LoanOfferer.Domain.csproj" />
+      <ProjectReference Include="..\LoanOfferer.Infrastructure\LoanOfferer.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

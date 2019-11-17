@@ -1,10 +1,11 @@
 using System.Threading.Tasks;
 using FluentAssertions;
+using LoanOfferer.CommandHandlers;
+using LoanOfferer.Commands;
 using LoanOfferer.Domain.Entities;
 using LoanOfferer.Domain.Factories;
 using LoanOfferer.Domain.Repositories;
 using LoanOfferer.Domain.Services;
-using LoanOfferer.Lambda.Services;
 using Moq;
 using Xunit;
 
@@ -12,35 +13,36 @@ namespace LoanOfferer.Test.Services
 {
     public class When_creating_offer_in_create_offer_service
     {
+        private const string PeselNumber = "testPeselNumber";
+        private const string EmailAddress = "testEmailAddress";
+
         [Fact]
         public async Task It_should_create_offer_entity_using_offer_factory()
         {
             // Given
-            const string peselNumber = "testPeselNumber";
-            const string emailAddress = "testEmailAddress";
-            var factoryMock = CreateConfiguredLoanOfferFactoryMock(peselNumber, emailAddress);
-            var service = CreateOfferService(factoryMock);
+            var factoryMock = CreateConfiguredLoanOfferFactoryMock();
+            var command = CreateTestCommand();
+            var handler = CreateCreateOfferCommandHandler(factoryMock);
 
             // When
-            await service.CreateOfferAsync(peselNumber, emailAddress);
+            await handler.Handle(command);
 
             // Then
-            factoryMock.Verify(mock => mock.Create(peselNumber, emailAddress), Times.Once);
+            factoryMock.Verify(mock => mock.Create(PeselNumber, EmailAddress), Times.Once);
         }
 
         [Fact]
         public async Task It_should_add_created_loan_offer_entity_to_repository()
         {
             // Given
-            const string peselNumber = "testPeselNumber";
-            const string emailAddress = "testEmailAddress";
             var loanOfferMock = new Mock<ILoanOffer>();
             var repositoryMock = new Mock<ILoanOfferRepository>();
-            var factoryMock = CreateConfiguredLoanOfferFactoryMock(peselNumber, emailAddress, loanOfferMock);
-            var service = CreateOfferService(factoryMock, loanOfferRepositoryMock: repositoryMock);
+            var factoryMock = CreateConfiguredLoanOfferFactoryMock(loanOfferMock);
+            var command = CreateTestCommand();
+            var handler = CreateCreateOfferCommandHandler(factoryMock, loanOfferRepositoryMock: repositoryMock);
 
             // When
-            await service.CreateOfferAsync(peselNumber, emailAddress);
+            await handler.Handle(command);
 
             // Then
             repositoryMock.Verify(mock => mock.AddAsync(loanOfferMock.Object), Times.Once);
@@ -50,14 +52,13 @@ namespace LoanOfferer.Test.Services
         public async Task It_should_return_created_loan_offer_entity()
         {
             // Given
-            const string peselNumber = "testPeselNumber";
-            const string emailAddress = "testEmailAddress";
             var loanOfferMock = new Mock<ILoanOffer>();
-            var factoryMock = CreateConfiguredLoanOfferFactoryMock(peselNumber, emailAddress, loanOfferMock);
-            var service = CreateOfferService(factoryMock);
+            var factoryMock = CreateConfiguredLoanOfferFactoryMock(loanOfferMock);
+            var command = CreateTestCommand();
+            var handler = CreateCreateOfferCommandHandler(factoryMock);
 
             // When
-            var result = await service.CreateOfferAsync(peselNumber, emailAddress);
+            var result = await handler.Handle(command);
 
             // Then
             result.Should().Be(loanOfferMock.Object);
@@ -67,38 +68,35 @@ namespace LoanOfferer.Test.Services
         public async Task It_should_call_get_score_in_scoring_service()
         {
             // Given
-            const string peselNumber = "testPeselNumber";
-            const string emailAddress = "testEmailAddress";
             var loanOfferMock = new Mock<ILoanOffer>();
             var scoringServiceMock = new Mock<IScoringService>();
-            var factoryMock = CreateConfiguredLoanOfferFactoryMock(peselNumber, emailAddress, loanOfferMock);
-            var service = CreateOfferService(factoryMock, scoringServiceMock);
+            var factoryMock = CreateConfiguredLoanOfferFactoryMock(loanOfferMock);
+            var command = CreateTestCommand();
+            var handler = CreateCreateOfferCommandHandler(factoryMock, scoringServiceMock);
 
             // When
-            await service.CreateOfferAsync(peselNumber, emailAddress);
+            await handler.Handle(command);
 
             // Then
             scoringServiceMock.Verify(mock => mock.GetScoreAsync(loanOfferMock.Object.PeselNumber), Times.Once);
         }
 
-        private static Mock<ILoanOfferFactory> CreateConfiguredLoanOfferFactoryMock(
-            string peselNumber,
-            string emailAddress,
-            IMock<ILoanOffer> loanOfferMock = null
-        )
+        private static CreateOfferCommand CreateTestCommand() => new CreateOfferCommand(PeselNumber, EmailAddress);
+
+        private static Mock<ILoanOfferFactory> CreateConfiguredLoanOfferFactoryMock(IMock<ILoanOffer> loanOfferMock = null)
         {
             var mock = new Mock<ILoanOfferFactory>();
-            mock.Setup(m => m.Create(peselNumber, emailAddress))
+            mock.Setup(m => m.Create(PeselNumber, EmailAddress))
                 .Returns(loanOfferMock?.Object ?? new Mock<ILoanOffer>().Object);
             return mock;
         }
 
-        private static CreateOfferService CreateOfferService(
+        private static CreateOfferCommandHandler CreateCreateOfferCommandHandler(
             IMock<ILoanOfferFactory> loanOfferFactoryMock = null,
             IMock<IScoringService> scoringServiceMock = null,
             IMock<ILoanOfferRepository> loanOfferRepositoryMock = null
         )
-            => new CreateOfferService(
+            => new CreateOfferCommandHandler(
                 loanOfferFactoryMock?.Object ?? new Mock<ILoanOfferFactory>().Object,
                 loanOfferRepositoryMock?.Object ?? new Mock<ILoanOfferRepository>().Object,
                 scoringServiceMock?.Object ?? new Mock<IScoringService>().Object

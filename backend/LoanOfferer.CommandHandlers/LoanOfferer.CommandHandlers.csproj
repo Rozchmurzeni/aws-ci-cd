@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\LoanOfferer.Commands\LoanOfferer.Commands.csproj" />
+      <ProjectReference Include="..\LoanOfferer.Domain\LoanOfferer.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

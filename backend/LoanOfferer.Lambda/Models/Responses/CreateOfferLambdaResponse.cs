@@ -10,7 +10,7 @@ namespace LoanOfferer.Lambda.Models.Responses
     {
         private const string CorsHeaderName = "Access-Control-Allow-Origin";
         private const string CorsHeaderValue = "*";
-        
+
         private CreateOfferResponse(Guid id, int maxLoanAmount)
         {
             StatusCode = (int) HttpStatusCode.Created;
@@ -21,7 +21,7 @@ namespace LoanOfferer.Lambda.Models.Responses
                     MaxLoanAmount = maxLoanAmount
                 }
             );
-            
+
             if (Headers == null)
             {
                 Headers = new Dictionary<string, string>();

@@ -1,13 +1,10 @@
 using System.Threading.Tasks;
-using Amazon.Lambda.Core;
+using LoanOfferer.CommandHandlers;
 using LoanOfferer.Domain.Infrastructure.Factories;
 using LoanOfferer.Domain.Infrastructure.Repositories;
 using LoanOfferer.Domain.Infrastructure.Services;
 using LoanOfferer.Lambda.Models.Requests;
 using LoanOfferer.Lambda.Models.Responses;
-using LoanOfferer.Lambda.Services;
-
-[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
 namespace LoanOfferer.Lambda.Functions
 {
@@ -15,19 +12,19 @@ namespace LoanOfferer.Lambda.Functions
     {
         public async Task<CreateOfferResponse> ExecuteAsync(CreateOfferAPIGatewayRequest apiGatewayRequest)
         {
-            var service = CreateOfferService();
-            var loanOffer = await service.CreateOfferAsync(apiGatewayRequest.PeselNumber, apiGatewayRequest.EmailAddress);
+            var handler = CreateCreateOfferCommandHandler();
+            var loanOffer = await handler.Handle(apiGatewayRequest.ToCreateOfferCommand());
             return CreateOfferResponse.Success(loanOffer.Id.Value, loanOffer.MaxLoanAmount.Value);
         }
 
-        private static CreateOfferService CreateOfferService()
+        private static CreateOfferCommandHandler CreateCreateOfferCommandHandler()
         {
             var externalApiScoringServiceConfig = new EnvironmentVariablesExternalApiScoringServiceConfig();
             var loanOfferFactory = new LoanOfferFactory();
             var loanOfferRepository = new LoanOfferDynamoDbRepository(loanOfferFactory);
             var scoringService = new ExternalApiScoringService(externalApiScoringServiceConfig);
-            var service = new CreateOfferService(loanOfferFactory, loanOfferRepository, scoringService);
-            
+            var service = new CreateOfferCommandHandler(loanOfferFactory, loanOfferRepository, scoringService);
+
             return service;
         }
     }
